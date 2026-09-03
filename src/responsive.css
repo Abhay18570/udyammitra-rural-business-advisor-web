@@ -1,0 +1,1735 @@
+/* ==========================================================================
+   UDYAMMITRA (SIH26091-Web) — Complete Responsive CSS Design Layer
+   Target viewports: 320px, 360px, 375px, 390px, 414px, 480px, 600px,
+                     768px, 820px, 1024px, 1280px, 1440px, 1536px, 1920px
+   Breakpoints:
+     - Large Desktop: >= 1440px
+     - Desktop: 1024px – 1439px
+     - Tablet: 768px – 1023px
+     - Large Mobile / Small Tablet: 481px – 767px
+     - Mobile: <= 480px (with 380px/320px micro-adjustments)
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. GLOBAL TOKENS, RESETS & BASE RESPONSIVE RULES
+   -------------------------------------------------------------------------- */
+:root {
+  --content-max-width: 1240px;
+  --reading-max-width: 720px;
+  --page-padding: clamp(16px, 3vw, 32px);
+  --section-gap: clamp(48px, 6vw, 84px);
+  --mobile-touch-target: 44px;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  min-width: 0;
+  min-height: 100%;
+}
+
+body {
+  overflow-wrap: break-word;
+  word-break: normal;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Ensure flex and grid items never overflow parent containers */
+.app-shell,
+.dashboard-layout,
+.dashboard-main,
+.dashboard-main main,
+main,
+section,
+article,
+header,
+footer,
+nav,
+aside,
+form,
+fieldset,
+dl,
+ol,
+ul,
+div {
+  min-width: 0;
+}
+
+/* Media, map, chart & canvas constraints */
+img, svg, canvas, video {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Interactive elements default max-width & text handling */
+input, select, textarea, button {
+  max-width: 100%;
+  font: inherit;
+}
+
+/* Typography scaling & word wrap */
+h1, h2, h3, h4, h5, h6, p, a, button, label, dt, dd, li, span, strong, small, em, code {
+  overflow-wrap: break-word;
+}
+
+/* Container fluid width */
+.container {
+  width: 100%;
+  max-width: calc(var(--content-max-width) + (var(--page-padding) * 2));
+  padding-inline: var(--page-padding);
+  margin-inline: auto;
+}
+
+.section {
+  padding-block: var(--section-gap);
+}
+
+.section-heading {
+  max-width: var(--reading-max-width);
+}
+
+.section-heading h2,
+.cta-section h2,
+.gov-section-heading h2 {
+  font-size: clamp(1.65rem, 3.2vw, 2.35rem);
+  line-height: 1.2;
+}
+
+.page-heading h1,
+.onboarding-heading h1,
+.workspace-page h1,
+.dashboard-welcome h1,
+.catalog-heading h1,
+.business-detail-heading h1,
+.market-heading h1,
+.financial-heading h1 {
+  font-size: clamp(1.85rem, 3.5vw, 2.6rem);
+  line-height: 1.18;
+}
+
+.landing-hero__copy h1,
+.gov-hero-copy h1 {
+  font-size: clamp(2.2rem, 4.2vw, 3.5rem);
+  line-height: 1.1;
+}
+
+.gov-final-cta h2,
+.final-cta h2 {
+  font-size: clamp(1.65rem, 3vw, 2.2rem);
+  line-height: 1.22;
+}
+
+/* Buttons & Badges Responsive Sizing */
+.button {
+  max-width: 100%;
+  min-height: var(--mobile-touch-target);
+  height: auto;
+  padding-block: 10px;
+  line-height: 1.25;
+  white-space: normal;
+  text-align: center;
+}
+
+.badge,
+.status-badge,
+.rank-badge,
+.current-business-badge,
+.demo-pill,
+.business-cat-badge,
+.feasibility-tag {
+  max-width: 100%;
+  white-space: normal;
+  line-height: 1.35;
+}
+
+/* Global Table Wrap Scroll Container */
+.table-wrap,
+.market-table-wrap,
+.feasibility-table-wrap {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.table-wrap table {
+  min-width: 620px;
+}
+
+.market-table-wrap table {
+  min-width: 1080px;
+}
+
+.feasibility-table-wrap table {
+  min-width: 920px;
+}
+
+.table-wrap th,
+.table-wrap td,
+.market-table-wrap th,
+.market-table-wrap td,
+.feasibility-table-wrap th,
+.feasibility-table-wrap td {
+  overflow-wrap: normal;
+  word-break: normal;
+}
+
+.profile-tags span,
+.state-pills span,
+.market-tags span,
+.selection-chip {
+  max-width: 100%;
+  overflow-wrap: break-word;
+}
+
+/* --------------------------------------------------------------------------
+   2. PUBLIC HEADER, UTILITY BAR & FOOTER
+   -------------------------------------------------------------------------- */
+.site-header .container {
+  position: relative;
+}
+
+.menu-button {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  place-items: center;
+  flex: 0 0 auto;
+}
+
+.public-nav-backdrop {
+  display: none;
+}
+
+.landing-hero__grid {
+  min-height: min(680px, calc(100dvh - 112px));
+  gap: clamp(36px, 5vw, 72px);
+}
+
+.landing-hero__copy,
+.gov-hero-copy,
+.journey-preview,
+.decision-journey,
+.advisory-grid > *,
+.financial-grid > *,
+.scheme-grid > *,
+.report-grid > * {
+  min-width: 0;
+}
+
+.journey-preview,
+.decision-journey,
+.health-card,
+.finance-preview,
+.scheme-card,
+.report-sheet,
+.opportunity-preview {
+  max-width: 100%;
+}
+
+.problem-card p,
+.journey-grid p,
+.principle-grid p,
+.scheme-card p,
+.report-grid > div > p {
+  font-size: 0.875rem;
+}
+
+.footer a,
+.footer span,
+.footer-grid > div:first-child p {
+  font-size: 0.8125rem;
+}
+
+.problem-grid,
+.core-feature-grid,
+.opportunity-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.journey-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.advisory-grid,
+.financial-grid,
+.scheme-grid,
+.report-grid {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+}
+
+.final-cta .container > div,
+.gov-final-cta .container > div {
+  min-width: 0;
+}
+
+.footer span {
+  min-width: 0;
+}
+
+.footer span svg {
+  flex: 0 0 auto;
+}
+
+/* --------------------------------------------------------------------------
+   3. AUTHENTICATION & ONBOARDING
+   -------------------------------------------------------------------------- */
+.auth-layout {
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+.auth-layout > main,
+.auth-layout > aside,
+.auth-card,
+.auth-card form,
+.auth-field,
+.password-input,
+.form-grid {
+  min-width: 0;
+}
+
+.auth-field input,
+.auth-field select,
+.profile-field input,
+.profile-field select,
+.profile-field textarea,
+.field input,
+.field select {
+  width: 100%;
+}
+
+.auth-field > label,
+.profile-field > span {
+  font-size: 0.8125rem;
+}
+
+.field-error,
+.integration-message,
+.auth-notice p {
+  overflow-wrap: break-word;
+}
+
+.choice {
+  min-width: 0;
+}
+
+.choice input {
+  flex: 0 0 auto;
+}
+
+.onboarding-shell,
+.workspace-page {
+  width: 100%;
+  max-width: 1244px;
+  padding-inline: var(--page-padding);
+}
+
+.onboarding-layout,
+.profile-card,
+.profile-form,
+.profile-grid,
+.profile-field {
+  min-width: 0;
+}
+
+.selection-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.profile-card > footer {
+  gap: 12px;
+}
+
+.profile-sections dd,
+.profile-tags span {
+  overflow-wrap: break-word;
+}
+
+/* --------------------------------------------------------------------------
+   4. DASHBOARD APP SHELL & CARDS
+   -------------------------------------------------------------------------- */
+.dashboard-layout {
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+.sidebar {
+  min-height: 100vh;
+  min-height: 100dvh;
+  max-height: 100dvh;
+  padding-bottom: max(23px, env(safe-area-inset-bottom));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.sidebar nav,
+.sidebar__bottom {
+  flex: 0 0 auto;
+}
+
+.sidebar a,
+.sidebar button {
+  min-height: 44px;
+}
+
+.sidebar-backdrop {
+  display: none;
+}
+
+.dashboard-main > header {
+  min-width: 0;
+}
+
+.workspace-title {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.entrepreneur-dashboard {
+  width: 100%;
+  max-width: 1304px;
+  padding-inline: var(--page-padding);
+}
+
+.dashboard-card,
+.dashboard-context > div,
+.quick-action,
+.current-business-card > div,
+.analysis-empty-card {
+  min-width: 0;
+}
+
+.dashboard-context strong {
+  overflow-wrap: break-word;
+}
+
+.quick-action {
+  padding-bottom: 34px;
+}
+
+.quick-action__copy p,
+.analysis-empty-card p,
+.recent-empty p,
+.current-business-card p {
+  font-size: 0.8125rem;
+}
+
+.quick-action__copy strong {
+  font-size: 0.875rem;
+}
+
+.profile-complete__top p,
+.analysis-empty-card > strong {
+  font-size: 0.75rem;
+}
+
+.profile-snapshot dd,
+.current-business-card dd {
+  font-size: 0.8125rem;
+}
+
+.journey-progress li strong {
+  font-size: 0.75rem;
+}
+
+.journey-progress li small {
+  font-size: 0.6875rem;
+}
+
+/* --------------------------------------------------------------------------
+   5. CATALOG, BUSINESS DETAIL & FEASIBILITY
+   -------------------------------------------------------------------------- */
+.catalog-page,
+.business-detail-page {
+  width: 100%;
+  max-width: 1244px;
+  padding-inline: var(--page-padding);
+}
+
+.catalog-filters > *,
+.business-catalog-card,
+.business-card__top > div,
+.business-overview-grid > *,
+.knowledge-grid > *,
+.top-match-card {
+  min-width: 0;
+}
+
+.catalog-filters label {
+  font-size: 0.75rem;
+}
+
+.catalog-filters input,
+.catalog-filters select {
+  font-size: 1rem;
+}
+
+.business-catalog-grid,
+.catalog-skeleton {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.business-catalog-card {
+  min-height: 0;
+}
+
+.business-catalog-card > p,
+.business-overview > p,
+.business-analysis-cta p {
+  font-size: 0.875rem;
+}
+
+.business-catalog-card h2 {
+  font-size: 1rem;
+}
+
+.business-catalog-card dl {
+  margin-top: auto;
+}
+
+.business-catalog-card dt,
+.business-cost-card dt {
+  font-size: 0.6875rem;
+}
+
+.business-catalog-card dd,
+.business-cost-card dd {
+  font-size: 0.8125rem;
+  overflow-wrap: break-word;
+}
+
+.business-catalog-card > a,
+.detail-back {
+  min-height: 44px;
+}
+
+.catalog-notice,
+.catalog-result-count {
+  font-size: 0.8125rem;
+}
+
+.knowledge-card li,
+.compliance-card li {
+  font-size: 0.8125rem;
+}
+
+.compliance-card p,
+.estimate-note {
+  font-size: 0.75rem;
+}
+
+/* --------------------------------------------------------------------------
+   6. MARKET INTELLIGENCE & LEAFLET MAP
+   -------------------------------------------------------------------------- */
+.market-page {
+  width: 100%;
+  max-width: 1244px;
+  padding-inline: var(--page-padding);
+}
+
+.market-controls,
+.market-summary,
+.market-map-card,
+.market-business-section {
+  min-width: 0;
+}
+
+.market-map {
+  width: 100%;
+  max-width: 100%;
+  height: 430px;
+}
+
+.market-map .leaflet-container {
+  height: 100%;
+  width: 100%;
+  z-index: 1;
+}
+
+/* --------------------------------------------------------------------------
+   7. FINANCIAL PLAN & SMART CALCULATOR
+   -------------------------------------------------------------------------- */
+.financial-page {
+  width: 100%;
+  max-width: 1244px;
+  padding-inline: var(--page-padding);
+}
+
+.financial-business-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.financial-result-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.result-card strong {
+  font-size: clamp(1.2rem, 2.2vw, 1.45rem);
+  overflow-wrap: break-word;
+}
+
+.money-input {
+  min-height: 50px;
+}
+
+.money-input input {
+  font-size: 1.125rem;
+}
+
+.funding-visual {
+  min-width: 0;
+}
+
+.funding-visual__labels {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.formula-applied code {
+  overflow-x: auto;
+  white-space: normal;
+  overflow-wrap: break-word;
+  word-break: break-all;
+}
+
+.alignment-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+/* --------------------------------------------------------------------------
+   8. ADMIN LAYOUT
+   -------------------------------------------------------------------------- */
+.admin-layout {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: grid;
+  grid-template-columns: 230px 1fr;
+}
+
+.admin-layout > aside {
+  background: #172330;
+  color: #fff;
+  padding: 22px 16px;
+}
+
+.admin-layout main {
+  min-width: 0;
+  padding-inline: var(--page-padding);
+}
+
+/* ==========================================================================
+   BREAKPOINT QUERIES
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   LAPTOP / COMPACT DESKTOP (<= 1199px)
+   -------------------------------------------------------------------------- */
+@media (max-width: 1199px) {
+  .problem-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .business-catalog-grid,
+  .catalog-skeleton {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .financial-business-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .onboarding-layout {
+    grid-template-columns: 1fr;
+  }
+  .onboarding-progress {
+    position: static;
+  }
+  .onboarding-progress ol {
+    display: none;
+  }
+  .profile-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .quick-action-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .dashboard-two-column {
+    grid-template-columns: 1fr;
+  }
+  .analysis-empty-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .analysis-empty-card:last-child {
+    grid-column: 1 / -1;
+  }
+  .primary-journey {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .primary-journey__actions {
+    flex-wrap: wrap;
+  }
+  .knowledge-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* --------------------------------------------------------------------------
+   TABLET / SMALL LAPTOP (<= 1023px)
+   -------------------------------------------------------------------------- */
+@media (max-width: 1023px) {
+  :root {
+    --page-padding: clamp(18px, 3.2vw, 28px);
+    --section-gap: clamp(48px, 6.5vw, 68px);
+  }
+
+  .utility-bar p span,
+  .utility-bar a {
+    display: none;
+  }
+
+  .site-header {
+    height: 72px;
+  }
+
+  .nav {
+    display: none;
+    position: absolute;
+    z-index: 43;
+    left: var(--page-padding);
+    right: var(--page-padding);
+    top: calc(100% + 8px);
+    max-height: calc(100dvh - 88px);
+    overflow-y: auto;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 12px;
+    box-shadow: var(--shadow);
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .nav--open {
+    display: flex;
+  }
+
+  .nav > a:not(.button),
+  .nav .button {
+    width: 100%;
+    min-height: 44px;
+    margin: 0;
+    justify-content: flex-start;
+  }
+
+  .nav .button {
+    margin-top: 4px;
+    justify-content: center;
+  }
+
+  .menu-button {
+    display: grid;
+  }
+
+  .public-nav-backdrop {
+    display: block;
+    position: fixed;
+    z-index: 39;
+    inset: 0;
+    width: 100%;
+    max-width: none;
+    border: 0;
+    background: rgba(4, 24, 44, 0.38);
+    cursor: default;
+  }
+
+  .landing-hero__grid,
+  .gov-hero-grid {
+    min-height: 0;
+    grid-template-columns: 1fr;
+    padding-block: clamp(44px, 7vw, 68px);
+    gap: 36px;
+  }
+
+  .landing-hero__copy,
+  .gov-hero-copy {
+    text-align: center;
+  }
+
+  .landing-hero__copy > p,
+  .gov-hero-copy > p {
+    margin-inline: auto;
+  }
+
+  .institutional-eyebrow {
+    justify-content: center;
+  }
+
+  .hero-actions {
+    justify-content: center;
+  }
+
+  .journey-preview,
+  .decision-journey {
+    width: min(650px, 100%);
+    margin-inline: auto;
+  }
+
+  .capability-strip .container {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .problem-grid,
+  .core-feature-grid,
+  .opportunity-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .service-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .gov-process {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px;
+  }
+
+  .gov-process li:nth-child(3)::after {
+    display: none;
+  }
+
+  .journey-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .journey-grid li::after {
+    display: none;
+  }
+
+  .advisory-grid,
+  .financial-grid,
+  .scheme-grid,
+  .report-grid,
+  .feature-split {
+    grid-template-columns: 1fr;
+    gap: 36px;
+  }
+
+  .health-card,
+  .finance-preview,
+  .scheme-card,
+  .report-sheet {
+    width: min(680px, 100%);
+    margin-inline: auto;
+  }
+
+  .principle-grid,
+  .public-business-grid,
+  .trust-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .footer-grid {
+    grid-template-columns: 2fr 1fr 1fr;
+  }
+
+  .footer-grid > div:last-child {
+    grid-column: 1 / -1;
+  }
+
+  /* Sidebar Drawer on Tablet/Mobile */
+  .sidebar {
+    transform: translateX(-100%);
+    transition: transform 0.22s ease;
+    box-shadow: 18px 0 40px rgba(3, 20, 37, 0.24);
+  }
+
+  .sidebar--open {
+    transform: none;
+  }
+
+  .sidebar__top {
+    display: flex;
+    align-items: center;
+  }
+
+  .sidebar__top button {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    margin-left: auto;
+    background: none;
+    border: 0;
+    color: #fff;
+    padding: 0;
+    flex: 0 0 auto;
+  }
+
+  .sidebar-backdrop {
+    display: block;
+    position: fixed;
+    z-index: 45;
+    inset: 0;
+    width: 100%;
+    max-width: none;
+    border: 0;
+    background: rgba(3, 20, 37, 0.55);
+    cursor: default;
+  }
+
+  .dashboard-main {
+    margin-left: 0;
+  }
+
+  .dashboard-main > header {
+    position: sticky;
+    top: 0;
+    z-index: 35;
+    padding-inline: var(--page-padding);
+  }
+
+  .dashboard-main > header button {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    flex: 0 0 auto;
+  }
+
+  .dashboard-main main .container {
+    width: 100%;
+  }
+
+  .profile-snapshot dl {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .business-catalog-grid,
+  .catalog-skeleton {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .top-match-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .top-match-card:last-child {
+    grid-column: 1 / -1;
+  }
+
+  .component-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .catalog-filters {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .filter-summary {
+    display: none;
+  }
+
+  .business-overview-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .market-controls {
+    grid-template-columns: 1fr;
+  }
+
+  .market-stat-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .market-map {
+    height: 360px;
+  }
+
+  .financial-result-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .financial-business-summary,
+  .financial-input-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-layout {
+    grid-template-columns: 190px 1fr;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   LARGE MOBILE & SMALL TABLET (<= 767px)
+   -------------------------------------------------------------------------- */
+@media (max-width: 767px) {
+  :root {
+    --page-padding: 18px;
+    --section-gap: 52px;
+  }
+
+  .brand small {
+    display: none;
+  }
+
+  .landing-hero__copy h1,
+  .gov-hero-copy h1 {
+    letter-spacing: -0.02em;
+  }
+
+  .landing-hero__copy > p,
+  .gov-hero-copy > p,
+  .section-heading p,
+  .gov-section-heading p,
+  .final-cta p,
+  .gov-final-cta p {
+    font-size: 1rem;
+  }
+
+  .footer {
+    padding-top: 40px;
+  }
+
+  .footer-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 28px;
+  }
+
+  .footer-grid > div:first-child,
+  .footer-grid > div:last-child {
+    grid-column: 1 / -1;
+  }
+
+  /* Auth stacked layout */
+  .auth-layout {
+    display: block;
+    background: var(--surface);
+  }
+
+  .auth-layout > aside {
+    min-height: 0;
+    padding: 20px var(--page-padding);
+  }
+
+  .auth-layout > aside > div,
+  .auth-layout > aside > small {
+    display: none;
+  }
+
+  .auth-layout > main {
+    display: block;
+    min-height: 0;
+    padding: 24px var(--page-padding) 44px;
+  }
+
+  .auth-card {
+    width: min(100%, 620px);
+    margin-inline: auto;
+    padding: 26px;
+  }
+
+  .form-options {
+    gap: 10px 18px;
+    flex-wrap: wrap;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Ensure inputs are >= 16px to prevent iOS Safari auto-zoom */
+  .auth-field input,
+  .auth-field select,
+  .profile-field input,
+  .profile-field select,
+  .profile-field textarea,
+  .catalog-filters input,
+  .catalog-filters select,
+  .field input,
+  .field select,
+  .money-input input {
+    font-size: 16px;
+  }
+
+  .onboarding-shell,
+  .workspace-page,
+  .entrepreneur-dashboard,
+  .catalog-page,
+  .business-detail-page,
+  .market-page,
+  .financial-page {
+    padding-top: 26px;
+    padding-bottom: 52px;
+  }
+
+  .profile-grid,
+  .profile-sections {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-sections section:last-child {
+    grid-column: auto;
+  }
+
+  .selection-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .dashboard-context,
+  .dashboard-profile-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-context strong {
+    white-space: normal;
+  }
+
+  .primary-journey {
+    padding: 22px;
+  }
+
+  .primary-journey__actions {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .primary-journey__actions .button {
+    width: 100%;
+  }
+
+  .analysis-empty-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .analysis-empty-card:last-child {
+    grid-column: auto;
+  }
+
+  .journey-progress ol {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .journey-progress li {
+    position: relative;
+    align-items: flex-start;
+  }
+
+  .journey-progress li:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    left: 13px;
+    top: 30px;
+    bottom: -14px;
+    width: 1px;
+    background: var(--line);
+  }
+
+  .current-business-card {
+    align-items: flex-start;
+  }
+
+  .catalog-filters {
+    grid-template-columns: 1fr;
+    padding: 15px;
+  }
+
+  .knowledge-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .business-analysis-cta {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .business-analysis-cta .button {
+    width: 100%;
+  }
+
+  .detail-skeleton {
+    grid-template-columns: 1fr;
+  }
+
+  .detail-skeleton i:first-child {
+    grid-column: auto;
+  }
+
+  .page-heading,
+  .analysis-meta,
+  .personal-feasibility > header,
+  .market-continue,
+  .section-action,
+  .gov-final-cta .container {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .analysis-meta .button,
+  .market-continue .button,
+  .gov-final-cta .button {
+    width: 100%;
+  }
+
+  .under-development {
+    padding: 40px 20px;
+  }
+
+  .evidence-challenges article {
+    border-right: 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .future-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Market Analysis Evidence Sheet on Mobile */
+  .evidence-panel {
+    position: fixed;
+    z-index: 60;
+    inset: auto 12px 12px;
+    width: calc(100% - 24px);
+    max-height: 80vh;
+    border-radius: 12px;
+    box-shadow: 0 12px 40px rgba(3, 20, 37, 0.4);
+  }
+
+  /* Financial Plan elements */
+  .financial-next {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .financial-next .next-action,
+  .financial-next .button {
+    width: 100%;
+  }
+
+  .formula-card {
+    flex-direction: column;
+  }
+
+  .alignment-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .funding-visual__labels {
+    grid-template-columns: 1fr;
+  }
+
+  /* Admin layout stacked */
+  .admin-layout {
+    display: block;
+  }
+
+  .admin-layout > aside {
+    padding: 16px;
+  }
+
+  .admin-layout > aside nav {
+    display: flex;
+    overflow-x: auto;
+    gap: 6px;
+    padding-bottom: 6px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .admin-layout > aside nav a {
+    white-space: nowrap;
+    padding: 8px 12px;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   STANDARD MOBILE (<= 639px)
+   -------------------------------------------------------------------------- */
+@media (max-width: 639px) {
+  :root {
+    --page-padding: 16px;
+    --section-gap: 44px;
+  }
+
+  .utility-bar .container {
+    padding-inline: 12px;
+  }
+
+  .utility-bar .container > div button:first-of-type {
+    display: none;
+  }
+
+  .brand__mark {
+    width: 40px;
+    height: 40px;
+  }
+
+  .brand strong {
+    font-size: 1.125rem;
+  }
+
+  .landing-hero__grid,
+  .gov-hero-grid {
+    padding-block: 36px;
+    gap: 28px;
+  }
+
+  .landing-hero__copy h1,
+  .gov-hero-copy h1 {
+    font-size: clamp(2rem, 9vw, 2.6rem);
+  }
+
+  .hero-actions,
+  .final-cta .container > div:last-child,
+  .gov-final-cta .container > div:last-child {
+    width: 100%;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .hero-actions .button,
+  .final-cta .button,
+  .gov-final-cta .button,
+  .split-heading > .button {
+    width: 100%;
+  }
+
+  .public-update .container {
+    width: 100%;
+    grid-template-columns: auto 1fr;
+    padding-right: 12px;
+    gap: 10px;
+  }
+
+  .public-update strong {
+    padding-inline: 10px;
+  }
+
+  .public-update p {
+    font-size: 0.6875rem;
+  }
+
+  .journey-preview {
+    padding: 18px;
+  }
+
+  .journey-preview ol {
+    grid-template-columns: 1fr;
+  }
+
+  .journey-preview li {
+    min-height: 0;
+  }
+
+  .capability-strip .container {
+    grid-template-columns: 1fr;
+    padding-block: 10px;
+  }
+
+  .capability-strip .container > div {
+    min-height: 50px;
+    justify-content: flex-start;
+    border-right: 0;
+    border-bottom: 1px solid #ffffff20;
+  }
+
+  .capability-strip .container > div:last-child {
+    border-bottom: 0;
+  }
+
+  .problem-grid,
+  .journey-grid,
+  .core-feature-grid,
+  .opportunity-grid,
+  .principle-grid,
+  .service-grid,
+  .evidence-challenges,
+  .public-business-grid,
+  .trust-list {
+    grid-template-columns: 1fr;
+  }
+
+  .gov-process {
+    grid-template-columns: 1fr;
+    text-align: left;
+    gap: 0;
+  }
+
+  .gov-process li {
+    display: grid;
+    grid-template-columns: 50px 24px 1fr;
+    align-items: center;
+    text-align: left;
+    padding: 8px 0;
+  }
+
+  .gov-process li:not(:last-child)::after {
+    left: 24px;
+    top: 54px;
+    width: 1px;
+    height: 18px;
+    display: block;
+  }
+
+  .gov-process li > span {
+    margin: 0;
+  }
+
+  .split-heading,
+  .final-cta .container {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .check-list,
+  .scheme-inputs,
+  .report-sheet ul,
+  .formal-checks,
+  .evidence-document dl {
+    grid-template-columns: 1fr;
+  }
+
+  .footer-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .footer-grid > div:first-child,
+  .footer-grid > div:last-child {
+    grid-column: auto;
+  }
+
+  .footer-grid > div {
+    min-width: 0;
+  }
+
+  .auth-layout > aside {
+    padding-block: 14px;
+  }
+
+  .auth-layout > main {
+    padding-top: 18px;
+  }
+
+  .auth-card {
+    padding: 20px;
+    border-radius: 12px;
+  }
+
+  .auth-card h2 {
+    font-size: clamp(1.45rem, 7.5vw, 1.85rem);
+  }
+
+  .password-rules ul {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .onboarding-heading {
+    margin-bottom: 20px;
+  }
+
+  .onboarding-progress,
+  .profile-card,
+  .profile-sections section,
+  .dashboard-card,
+  .business-overview,
+  .business-cost-card,
+  .knowledge-card,
+  .compliance-card,
+  .business-analysis-cta,
+  .market-controls,
+  .market-summary,
+  .market-map-card,
+  .market-business-section,
+  .financial-business-summary,
+  .financial-input-card,
+  .funding-visual,
+  .formula-card,
+  .cost-alignment {
+    padding: 18px;
+  }
+
+  .profile-form {
+    min-height: 0;
+  }
+
+  .selection-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .business-choice label {
+    min-height: 44px;
+    margin-right: 18px;
+  }
+
+  .profile-card > footer {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .profile-card > footer > span:empty {
+    display: none;
+  }
+
+  .profile-card > footer .button {
+    width: 100%;
+  }
+
+  .profile-page-heading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .profile-page-heading .button {
+    width: 100%;
+  }
+
+  .profile-sections dl,
+  .profile-snapshot dl,
+  .current-business-card dl,
+  .summary-metrics,
+  .signal-groups {
+    grid-template-columns: 1fr;
+  }
+
+  .quick-action-grid,
+  .business-catalog-grid,
+  .catalog-skeleton,
+  .financial-business-grid,
+  .top-match-grid,
+  .component-grid,
+  .feasibility-evidence-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .top-match-card:last-child {
+    grid-column: auto;
+  }
+
+  .quick-action {
+    min-height: 0;
+  }
+
+  .profile-complete__top {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .profile-complete__top > strong {
+    margin-left: 52px;
+  }
+
+  .card-heading-row {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .current-business-card,
+  .recent-empty,
+  .compliance-card,
+  .cost-alignment__header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .dashboard-error {
+    margin-block: 30px;
+    padding: 22px 16px;
+  }
+
+  .dashboard-error > div,
+  .catalog-state > div {
+    flex-direction: column;
+  }
+
+  .dashboard-error .button,
+  .catalog-state > div .button {
+    width: 100%;
+  }
+
+  .dashboard-skeleton {
+    grid-template-columns: 1fr;
+  }
+
+  .business-detail-heading {
+    align-items: flex-start;
+  }
+
+  .business-detail-icon {
+    display: none;
+  }
+
+  .business-card__top {
+    gap: 10px;
+  }
+
+  .business-analysis-cta {
+    padding: 18px;
+  }
+
+  .catalog-state {
+    padding: 36px 16px;
+  }
+
+  .market-map {
+    height: 290px;
+  }
+
+  .analysis-options .button {
+    width: 100%;
+  }
+
+  .financial-result-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .language-promotion > .container {
+    align-items: flex-start;
+  }
+
+  .language-promotion > .container > svg {
+    width: 35px;
+    height: 35px;
+  }
+
+  .language-names {
+    flex-wrap: wrap;
+  }
+
+  .prototype-notice {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   NARROW MOBILE (<= 480px)
+   -------------------------------------------------------------------------- */
+@media (max-width: 480px) {
+  :root {
+    --page-padding: 14px;
+  }
+
+  .market-controls dl,
+  .market-stat-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .section-title-wrap {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .top-match-main {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .feasibility-score {
+    flex: auto;
+    width: 100%;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   ULTRA-NARROW (320px – 380px)
+   -------------------------------------------------------------------------- */
+@media (max-width: 380px) {
+  :root {
+    --page-padding: 12px;
+  }
+
+  .utility-bar p strong {
+    font-size: 0.72rem;
+  }
+
+  .workspace-title {
+    font-size: 0.8125rem;
+  }
+
+  .dashboard-main > header {
+    padding-inline: 10px;
+  }
+
+  .profile-complete__top > strong {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .password-rules ul {
+    grid-template-columns: 1fr;
+  }
+
+  .auth-card {
+    padding: 16px;
+  }
+
+  .onboarding-progress,
+  .profile-card,
+  .dashboard-card,
+  .financial-input-card,
+  .result-card,
+  .funding-visual {
+    padding: 14px;
+  }
+
+  .button {
+    font-size: 13px;
+    padding-inline: 12px;
+  }
+
+  .brand strong {
+    font-size: 1rem;
+  }
+
+  .brand__mark {
+    width: 36px;
+    height: 36px;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   SHORT HEIGHT / LANDSCAPE VIEWPORTS
+   -------------------------------------------------------------------------- */
+@media (max-height: 620px) and (max-width: 1023px) {
+  .sidebar {
+    padding-top: 14px;
+    padding-bottom: max(14px, env(safe-area-inset-bottom));
+  }
+  .sidebar__top {
+    padding-bottom: 10px;
+  }
+  .sidebar a,
+  .sidebar button {
+    min-height: 40px;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   REDUCED MOTION SUPPORT
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.001ms !important;
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

@@ -1,0 +1,4 @@
+import { Construction } from 'lucide-react'
+import { useLocation } from 'react-router-dom'
+import { Breadcrumbs, PageHeading } from '../components/ui/Navigation'
+export function PlaceholderPage({ title, area = 'Module' }: { title?: string; area?: string }) { const { pathname } = useLocation(); const derived = pathname.split('/').filter(Boolean).pop()?.replaceAll('-', ' ') ?? 'Page'; const name = title ?? derived.replace(/\b\w/g, c => c.toUpperCase()); return <section className="placeholder container"><Breadcrumbs items={[{ label: 'Home', to: '/' }, { label: name }]} /><PageHeading eyebrow={area} title={name} description="This module is under development and will be connected in a future implementation phase." /><div className="under-development"><Construction /><h2>Coming in the next phase</h2><p>The routing and layout foundation for this module is ready. No simulated data or functionality has been added.</p></div></section> }

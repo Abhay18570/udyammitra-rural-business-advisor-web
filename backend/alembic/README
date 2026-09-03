@@ -1,0 +1,4 @@
+Alembic migration environment for UdyamMitra.
+
+No domain migration is included yet because Module 04 intentionally defines no tables.
+Future PostgreSQL deployments should enable the `postgis` and `vector` extensions before migrations that depend on them.
