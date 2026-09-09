@@ -1,7 +1,8 @@
 import uuid
 from typing import Optional, Type
 
-from sqlalchemy import func, select
+from sqlalchemy import select
+from app.utils.spatial import distance_meters, within_meters
 from sqlalchemy.orm import Session
 
 from app.models.market import DemoAmenity, DemoInstitution, DemoLocalBusiness, DemoLocation, MarketAnalysis
@@ -18,13 +19,13 @@ class MarketRepository:
         return self.db.scalar(select(DemoLocation).where(DemoLocation.slug == slug, DemoLocation.is_active.is_(True)))
 
     def nearby(self, model: Type, location: DemoLocation, radius_km: int):
-        distance = func.ST_Distance(model.geo_point, location.geo_point) / 1000.0
-        query = select(model, distance.label("distance_km")).where(model.is_active.is_(True), func.ST_DWithin(model.geo_point, location.geo_point, radius_km * 1000)).order_by(distance)
+        distance = distance_meters(model.geo_point, location.geo_point) / 1000.0
+        query = select(model, distance.label("distance_km")).where(model.is_active.is_(True), within_meters(model.geo_point, location.geo_point, radius_km * 1000)).order_by(distance)
         return list(self.db.execute(query).all())
 
     def matching_businesses(self, location: DemoLocation, business_profile_id: uuid.UUID):
-        distance = func.ST_Distance(DemoLocalBusiness.geo_point, location.geo_point) / 1000.0
-        query = select(DemoLocalBusiness, distance.label("distance_km")).where(DemoLocalBusiness.is_active.is_(True), DemoLocalBusiness.business_profile_id == business_profile_id, func.ST_DWithin(DemoLocalBusiness.geo_point, location.geo_point, 10000)).order_by(distance)
+        distance = distance_meters(DemoLocalBusiness.geo_point, location.geo_point) / 1000.0
+        query = select(DemoLocalBusiness, distance.label("distance_km")).where(DemoLocalBusiness.is_active.is_(True), DemoLocalBusiness.business_profile_id == business_profile_id, within_meters(DemoLocalBusiness.geo_point, location.geo_point, 10000)).order_by(distance)
         return list(self.db.execute(query).all())
 
     def save_analysis(self, analysis: MarketAnalysis) -> MarketAnalysis:

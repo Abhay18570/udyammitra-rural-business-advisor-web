@@ -1,9 +1,13 @@
+import { useUi as useTextUi } from '../../i18n/uiContextValue'
+import { LocalizedText } from '../../i18n/LocalizedText'
 import { Check, ChevronLeft, ChevronRight } from 'lucide-react'
 import { useEffect, useState, type ChangeEvent, type ReactNode } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { Button } from '../../components/ui/Button'
 import { useAuth } from '../../context/authContextValue'
 import { getApiErrorMessage } from '../../services/apiError'
+import { businessService } from '../../services/businessService'
+import type { BusinessListItem } from '../../types/business'
 import { profileService } from '../../services/profileService'
 import type { EntrepreneurProfile, SelectionItem } from '../../types/profile'
 import { formatValidationError, stepSchemas } from './onboardingSchemas'
@@ -103,9 +107,9 @@ const initialProfile = (name: string, language: EntrepreneurProfile['preferredLa
 function Field({ label, error, children }: { label: string; error?: string; children: ReactNode }) {
   return (
     <label className="profile-field">
-      <span>{label}</span>
+      <span><LocalizedText value={label} /></span>
       {children}
-      {error && <small className="field-error">{error}</small>}
+      {error && <small className="field-error"><LocalizedText value={error} /></small>}
     </label>
   )
 }
@@ -121,12 +125,10 @@ function Select({
 }) {
   return (
     <select value={value ?? ''} onChange={e => onChange(e.target.value)}>
-      <option value="" disabled>
-        Select an option
-      </option>
+      <option value="" disabled><LocalizedText value={" Select an option "} /></option>
       {items.map(([val, label]) => (
         <option key={val || label} value={val}>
-          {label}
+          <LocalizedText value={label} />
         </option>
       ))}
     </select>
@@ -142,6 +144,7 @@ function SelectionGrid({
   selected: SelectionItem[]
   onChange: (items: SelectionItem[]) => void
 }) {
+  const { text: textUi } = useTextUi()
   const toggle = (name: string) =>
     onChange(
       selected.some(i => i.name === name)
@@ -161,16 +164,16 @@ function SelectionGrid({
             key={name}
           >
             {selected.some(i => i.name === name) && <Check size={15} />}
-            {name}
+            <LocalizedText value={name} />
           </button>
         ))}
       </div>
       {other && (
-        <Field label="Please describe Other">
+        <Field label={textUi("Please describe Other")}>
           <input
             value={other.otherDescription ?? ''}
             maxLength={120}
-            placeholder="Describe your skill/resource"
+            placeholder={textUi("Describe your skill/resource")}
             onChange={e =>
               onChange(
                 selected.map(i =>
@@ -186,12 +189,18 @@ function SelectionGrid({
 }
 
 export function OnboardingPage() {
+  const { language, setLanguage } = useTextUi()
+  const { text: textUi } = useTextUi()
   const { user } = useAuth()
   const navigate = useNavigate()
   const [params] = useSearchParams()
   const [profile, setProfile] = useState<EntrepreneurProfile>(() =>
     initialProfile(user?.fullName ?? '', user?.preferredLanguage ?? 'en')
   )
+  const [businesses, setBusinesses] = useState<BusinessListItem[]>([])
+  const [catalogError, setCatalogError] = useState('')
+  const loadCatalog = () => { setCatalogError(''); void businessService.list().then(setBusinesses).catch(() => setCatalogError('Unable to load supported businesses.')) }
+  useEffect(() => { void businessService.list().then(setBusinesses).catch(() => setCatalogError('Unable to load supported businesses.')) }, [])
   const [step, setStep] = useState(1)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
@@ -238,7 +247,7 @@ export function OnboardingPage() {
     const completing = step === 6
     try {
       const saved = await profileService.update({
-        ...profile,
+        ...profile, preferredLanguage: language,
         onboardingStep: completing ? 6 : step + 1,
         onboardingCompleted: completing,
       })
@@ -259,7 +268,7 @@ export function OnboardingPage() {
     return (
       <div className="onboarding-shell">
         <div className="profile-card">
-          <p>Loading your profile…</p>
+          <p><LocalizedText value={"Loading your profile…"} /></p>
         </div>
       </div>
     )
@@ -267,13 +276,13 @@ export function OnboardingPage() {
   return (
     <div className="onboarding-shell">
       <section className="onboarding-heading">
-        <span className="eyebrow">Entrepreneur profile</span>
-        <h1>Tell us about your journey</h1>
-        <p>This helps UdyamMitra personalise future business guidance. You can edit these details later.</p>
+        <span className="eyebrow"><LocalizedText value={"Entrepreneur profile"} /></span>
+        <h1><LocalizedText value={"Tell us about your journey"} /></h1>
+        <p><LocalizedText value={"This helps UdyamMitra personalise future business guidance. You can edit these details later."} /></p>
       </section>
       <div className="onboarding-layout">
         <aside className="onboarding-progress">
-          <strong>Step {step} of 6</strong>
+          <strong><LocalizedText value={"Step "} />{step}<LocalizedText value={" of 6"} /></strong>
           <div className="progress-track">
             <i style={{ width: `${(step / 6) * 100}%` }} />
           </div>
@@ -281,54 +290,52 @@ export function OnboardingPage() {
             {steps.map((name, index) => (
               <li key={name} className={index + 1 === step ? 'active' : index + 1 < step ? 'done' : ''}>
                 <span>{index + 1 < step ? <Check size={14} /> : index + 1}</span>
-                {name}
+                <LocalizedText value={name} />
               </li>
             ))}
           </ol>
         </aside>
         <main className="profile-card">
           <header>
-            <small>
-              STEP {step} OF 6
-            </small>
-            <h2>{steps[step - 1]}</h2>
+            <small><LocalizedText value={" STEP "} />{step}<LocalizedText value={" OF 6 "} /></small>
+            <h2><LocalizedText value={steps[step - 1]} /></h2>
           </header>
           {error && (
             <div className="profile-error" role="alert">
-              {error}
+              <LocalizedText value={error} />
             </div>
           )}
           <div className="profile-form">
             {step === 1 && (
               <div className="profile-grid">
-                <Field label="Full name">
+                <Field label={textUi("Full name")}>
                   <input value={profile.fullName} onChange={input('fullName')} />
                 </Field>
-                <Field label="Age group">
+                <Field label={textUi("Age group")}>
                   <Select
                     value={profile.ageGroup}
                     onChange={v => set('ageGroup', v as EntrepreneurProfile['ageGroup'])}
                     items={options.age}
                   />
                 </Field>
-                <Field label="Education (optional)">
+                <Field label={textUi("Education (optional)")}>
                   <Select
                     value={profile.education}
                     onChange={v => set('education', (v || undefined) as EntrepreneurProfile['education'])}
                     items={options.education}
                   />
                 </Field>
-                <Field label="Previous experience">
+                <Field label={textUi("Previous experience")}>
                   <Select
                     value={profile.previousExperience}
                     onChange={v => set('previousExperience', v as EntrepreneurProfile['previousExperience'])}
                     items={options.experience}
                   />
                 </Field>
-                <Field label="Preferred language">
+                <Field label={textUi("Preferred language")}>
                   <Select
-                    value={profile.preferredLanguage}
-                    onChange={v => set('preferredLanguage', v as EntrepreneurProfile['preferredLanguage'])}
+                    value={language}
+                    onChange={v => { setLanguage(v as EntrepreneurProfile['preferredLanguage']); set('preferredLanguage', v as EntrepreneurProfile['preferredLanguage']) }}
                     items={[
                       ['en', 'English'],
                       ['mr', 'मराठी'],
@@ -340,19 +347,19 @@ export function OnboardingPage() {
             )}
             {step === 2 && (
               <div className="profile-grid">
-                <Field label="State">
+                <Field label={textUi("State")}>
                   <input value={profile.state ?? ''} onChange={input('state')} />
                 </Field>
-                <Field label="District">
+                <Field label={textUi("District")}>
                   <input value={profile.district ?? ''} onChange={input('district')} />
                 </Field>
-                <Field label="Taluka">
+                <Field label={textUi("Taluka")}>
                   <input value={profile.taluka ?? ''} onChange={input('taluka')} />
                 </Field>
-                <Field label="Village / town">
+                <Field label={textUi("Village / town")}>
                   <input value={profile.village ?? ''} onChange={input('village')} />
                 </Field>
-                <Field label="Pincode">
+                <Field label={textUi("Pincode")}>
                   <input
                     inputMode="numeric"
                     maxLength={6}
@@ -364,36 +371,45 @@ export function OnboardingPage() {
             )}
             {step === 3 && (
               <div className="profile-grid">
-                <Field label="Available capital range">
+                <Field label={textUi("Proposed business (optional)")}>
+                  <select value={profile.proposedBusinessId ?? ''} onChange={e => set('proposedBusinessId', e.target.value || null)}>
+                    <option value=""><LocalizedText value={"Not selected"} /></option>
+                    {profile.proposedBusinessId && !businesses.some(b => b.id === profile.proposedBusinessId) && <option value={profile.proposedBusinessId}><LocalizedText value={"Saved business unavailable — choose another or clear"} /></option>}
+                    {businesses.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}
+                  </select>
+                  <small><LocalizedText value={"Used as your default in Market Analysis. You can change it later."} /></small>
+                  {catalogError && <span role="alert"><LocalizedText value={catalogError} /> <button type="button" onClick={loadCatalog}><LocalizedText value={"Retry"} /></button></span>}
+                </Field>
+                <Field label={textUi("Available capital range")}>
                   <Select
                     value={profile.capitalRange}
                     onChange={v => set('capitalRange', v as EntrepreneurProfile['capitalRange'])}
                     items={options.capital}
                   />
                 </Field>
-                <Field label="Your own capital (₹)">
+                <Field label={textUi("Your own capital (₹)")}>
                   <input
                     type="number"
                     min="0"
                     value={profile.ownCapital ?? ''}
                     onChange={input('ownCapital')}
                   />
-                  <small>Amount you can invest without borrowing.</small>
+                  <small><LocalizedText value={"Amount you can invest without borrowing."} /></small>
                 </Field>
-                <Field label="Loan required (₹)">
+                <Field label={textUi("Loan required (₹)")}>
                   <input
                     type="number"
                     min="0"
                     value={profile.loanRequired ?? ''}
                     onChange={input('loanRequired')}
                   />
-                  <small>Enter 0 if you do not need a loan.</small>
+                  <small><LocalizedText value={"Enter 0 if you do not need a loan."} /></small>
                 </Field>
               </div>
             )}
             {step === 4 && (
               <>
-                <p>Select all skills that apply.</p>
+                <p><LocalizedText value={"Select all skills that apply."} /></p>
                 <SelectionGrid
                   values={skills}
                   selected={profile.skills}
@@ -403,7 +419,7 @@ export function OnboardingPage() {
             )}
             {step === 5 && (
               <>
-                <p>Select resources already available to you.</p>
+                <p><LocalizedText value={"Select resources already available to you."} /></p>
                 <SelectionGrid
                   values={resources}
                   selected={profile.resources}
@@ -414,7 +430,7 @@ export function OnboardingPage() {
             {step === 6 && (
               <>
                 <fieldset className="business-choice">
-                  <legend>Do you currently run a business?</legend>
+                  <legend><LocalizedText value={"Do you currently run a business?"} /></legend>
                   <label>
                     <input
                       type="radio"
@@ -424,9 +440,7 @@ export function OnboardingPage() {
                         set('hasExistingBusiness', true)
                         if (!profile.existingBusiness) set('existingBusiness', blankBusiness)
                       }}
-                    />{' '}
-                    Yes
-                  </label>
+                    /><LocalizedText value={' '} /><LocalizedText value={" Yes "} /></label>
                   <label>
                     <input
                       type="radio"
@@ -436,14 +450,10 @@ export function OnboardingPage() {
                         set('hasExistingBusiness', false)
                         set('existingBusiness', undefined)
                       }}
-                    />{' '}
-                    No
-                  </label>
+                    /><LocalizedText value={' '} /><LocalizedText value={" No "} /></label>
                 </fieldset>
                 {profile.hasExistingBusiness === false && (
-                  <div className="profile-note">
-                    That’s completely fine—UdyamMitra also supports first-time entrepreneurs.
-                  </div>
+                  <div className="profile-note"><LocalizedText value={" That’s completely fine—UdyamMitra also supports first-time entrepreneurs. "} /></div>
                 )}
                 {profile.hasExistingBusiness && profile.existingBusiness && (
                   <BusinessFields
@@ -462,13 +472,12 @@ export function OnboardingPage() {
                 onClick={() => setStep(step - 1)}
                 disabled={saving}
               >
-                <ChevronLeft size={17} /> Back
-              </Button>
+                <ChevronLeft size={17} /><LocalizedText value={" Back "} /></Button>
             ) : (
               <span />
             )}
             <Button type="button" onClick={() => void next()} disabled={saving}>
-              {saving ? 'Saving…' : step === 6 ? 'Complete profile' : 'Save & continue'}{' '}
+              <LocalizedText value={saving ? 'Saving…' : step === 6 ? 'Complete profile' : 'Save & continue'} /><LocalizedText value={' '} />
               {!saving && <ChevronRight size={17} />}
             </Button>
           </footer>
@@ -485,6 +494,7 @@ function BusinessFields({
   business: NonNullable<EntrepreneurProfile['existingBusiness']>
   onChange: (business: NonNullable<EntrepreneurProfile['existingBusiness']>) => void
 }) {
+  const { text: textUi } = useTextUi()
   const text =
     (key: keyof typeof business) =>
     (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
@@ -495,13 +505,13 @@ function BusinessFields({
 
   return (
     <div className="profile-grid business-fields">
-      <Field label="Business name">
+      <Field label={textUi("Business name")}>
         <input value={business.businessName} onChange={text('businessName')} />
       </Field>
-      <Field label="Category">
+      <Field label={textUi("Category")}>
         <input value={business.businessCategory} onChange={text('businessCategory')} />
       </Field>
-      <Field label="Years operating">
+      <Field label={textUi("Years operating")}>
         <input
           type="number"
           min="0"
@@ -509,7 +519,7 @@ function BusinessFields({
           onChange={number('yearsOperating')}
         />
       </Field>
-      <Field label="Initial investment (₹)">
+      <Field label={textUi("Initial investment (₹)")}>
         <input
           type="number"
           min="0"
@@ -517,7 +527,7 @@ function BusinessFields({
           onChange={text('initialInvestment')}
         />
       </Field>
-      <Field label="Monthly revenue (₹)">
+      <Field label={textUi("Monthly revenue (₹)")}>
         <input
           type="number"
           min="0"
@@ -525,7 +535,7 @@ function BusinessFields({
           onChange={text('monthlyRevenue')}
         />
       </Field>
-      <Field label="Monthly expenses (₹)">
+      <Field label={textUi("Monthly expenses (₹)")}>
         <input
           type="number"
           min="0"
@@ -533,7 +543,7 @@ function BusinessFields({
           onChange={text('monthlyExpenses')}
         />
       </Field>
-      <Field label="Employees">
+      <Field label={textUi("Employees")}>
         <input
           type="number"
           min="0"
@@ -541,7 +551,7 @@ function BusinessFields({
           onChange={number('employeeCount')}
         />
       </Field>
-      <Field label="Estimated monthly customers">
+      <Field label={textUi("Estimated monthly customers")}>
         <input
           type="number"
           min="0"
@@ -549,7 +559,7 @@ function BusinessFields({
           onChange={number('estimatedMonthlyCustomers')}
         />
       </Field>
-      <Field label="Major challenges (optional)">
+      <Field label={textUi("Major challenges (optional)")}>
         <textarea
           rows={4}
           maxLength={2000}

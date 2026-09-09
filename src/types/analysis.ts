@@ -3,11 +3,12 @@ import type { BusinessCategory } from './business'
 export const capitalRanges = ['UP_TO_50000', 'RANGE_50000_TO_100000', 'RANGE_100000_TO_250000', 'RANGE_250000_TO_500000', 'RANGE_500000_TO_1000000', 'ABOVE_1000000'] as const
 export const analysisRadiiKm = [5, 10] as const
 export const enterpriseStages = ['NEW', 'EXISTING'] as const
-export const schemeStatuses = ['ELIGIBLE', 'INELIGIBLE', 'VERIFICATION_REQUIRED'] as const
+export const schemeStatuses = ['ELIGIBLE', 'INELIGIBLE', 'VERIFICATION_REQUIRED', 'ELIGIBLE_WITH_GAP', 'OUT_OF_SUPPORTED_RANGE'] as const
 export const calculationStatuses = ['NOT_CALCULATED', 'CALCULATED', 'UNAVAILABLE'] as const
 
 export type AnalysisRadiusKm = (typeof analysisRadiiKm)[number]
 export type EnterpriseStage = (typeof enterpriseStages)[number]
+export type SchemeType = 'MICRO_FINANCE' | 'TERM_LOAN'
 export type SchemeStatus = (typeof schemeStatuses)[number]
 export type CalculationStatus = (typeof calculationStatuses)[number]
 export type CurrencyCode = 'INR'

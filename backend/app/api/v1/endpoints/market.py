@@ -1,7 +1,7 @@
 import uuid
 from typing import Annotated
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Response
 from sqlalchemy.orm import Session
 
 from app.api.dependencies import get_current_user
@@ -9,6 +9,8 @@ from app.db.session import get_db
 from app.models.user import User
 from app.schemas.market import MarketAnalysisRequest, MarketAnalysisResponse, MarketLocationsResponse
 from app.services.market_service import MarketService
+from app.schemas.nearby_market import NearbyMarketRequest, NearbyMarketResponse
+from app.services.nearby_market_service import NearbyMarketService
 
 router = APIRouter()
 
@@ -31,3 +33,11 @@ def latest_analysis(user: Annotated[User, Depends(get_current_user)], db: Annota
 @router.get("/analyses/{analysis_id}", response_model=MarketAnalysisResponse)
 def get_analysis(analysis_id: uuid.UUID, user: Annotated[User, Depends(get_current_user)], db: Annotated[Session, Depends(get_db)]) -> MarketAnalysisResponse:
     return MarketService(db).get(user, analysis_id)
+
+
+@router.post("/nearby", response_model=NearbyMarketResponse)
+def nearby(payload: NearbyMarketRequest, response: Response, user: Annotated[User, Depends(get_current_user)], db: Annotated[Session, Depends(get_db)]) -> NearbyMarketResponse:
+    result = NearbyMarketService(db).analyze(user, payload)
+    if result.source.provider == 'GOOGLE_PLACES':
+        response.headers['Cache-Control'] = 'no-store'
+    return result

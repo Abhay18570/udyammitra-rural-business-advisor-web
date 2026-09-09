@@ -30,3 +30,11 @@ def test_analysis_contract_rejects_values_outside_domain(field: str, value) -> N
     payload[field] = value
     with pytest.raises(ValidationError):
         AnalysisInput.model_validate(payload)
+
+
+def test_scheme_shared_vocabulary_is_backward_compatible() -> None:
+    from app.schemas.analysis import SchemeStatus, SchemeType
+    assert {item.value for item in SchemeStatus} == {
+        "ELIGIBLE", "INELIGIBLE", "VERIFICATION_REQUIRED", "ELIGIBLE_WITH_GAP", "OUT_OF_SUPPORTED_RANGE",
+    }
+    assert {item.value for item in SchemeType} == {"MICRO_FINANCE", "TERM_LOAN"}

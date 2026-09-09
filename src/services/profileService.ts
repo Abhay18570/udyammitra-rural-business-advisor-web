@@ -15,6 +15,8 @@ type WireBusiness = {
   major_challenges?: string | null
 }
 type WireProfile = Record<string, unknown> & {
+  proposed_business_id?: string | null
+  proposed_business_name?: string | null
   full_name?: string | null
   preferred_language?: string | null
   age_group?: string | null
@@ -60,6 +62,8 @@ const businessFromWire = (item?: WireBusiness | null): ExistingBusiness | undefi
 }
 
 const fromWire = (w: WireProfile): EntrepreneurProfile => ({
+  proposedBusinessId: w.proposed_business_id ?? null,
+  proposedBusinessName: w.proposed_business_name ?? null,
   fullName: (w.full_name as string) || '',
   preferredLanguage: (w.preferred_language as EntrepreneurProfile['preferredLanguage']) || 'en',
   ageGroup: (w.age_group as EntrepreneurProfile['ageGroup']) || undefined,
@@ -99,6 +103,7 @@ const businessToWire = (b?: ExistingBusiness): WireBusiness | null => {
 }
 
 const toWire = (p: EntrepreneurProfile) => ({
+  proposed_business_id: p.proposedBusinessId ?? null,
   full_name: p.fullName ? p.fullName.trim() : '',
   preferred_language: p.preferredLanguage || 'en',
   age_group: p.ageGroup || null,
@@ -129,6 +134,11 @@ const toWire = (p: EntrepreneurProfile) => ({
 })
 
 export const profileService = {
+  async setPreferredLanguage(language: 'en' | 'hi' | 'mr'): Promise<void> {
+    // The existing API requires the current onboarding step, even for partial updates.
+    const current = await profileService.get()
+    await apiClient.put('/profile', { preferred_language: language, onboarding_step: current?.onboardingStep ?? 1 })
+  },
   async get(): Promise<EntrepreneurProfile | null> {
     try {
       return fromWire((await apiClient.get<WireProfile>('/profile')).data)

@@ -31,6 +31,7 @@ def test_official_one_lakh_example(client: TestClient) -> None:
     assert body["indicative_loan_amount"] == "900000.00"
     assert body["indicative_loan_percentage"] == "90.00"
     assert body["warnings"] == []
+    assert body["next_step"] == "Check the financing option and loan-cap coverage for this saved calculation."
 
 
 def test_fourteen_thousand_boundary(client: TestClient) -> None:

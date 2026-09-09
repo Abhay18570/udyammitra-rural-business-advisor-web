@@ -6,7 +6,7 @@ from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 
 from app.engines.financial_engine import calculate_financial_analysis
-from app.financial_rules import BUSINESS_DATA_NOTICE, FINANCIAL_ANALYSIS_VERSION, FINANCIAL_DISCLAIMER
+from app.financial_rules import BENEFICIARY_MARGIN_RATE, LOAN_SHARE_RATE, BUSINESS_DATA_NOTICE, FINANCIAL_ANALYSIS_VERSION, FINANCIAL_DISCLAIMER
 from app.models.financial import FinancialAnalysis
 from app.models.user import User
 from app.repositories.business_repository import BusinessRepository
@@ -56,7 +56,7 @@ class FinancialService:
             "warnings": calculated["warnings"],
             "disclaimer": FINANCIAL_DISCLAIMER,
             "data_source_notice": BUSINESS_DATA_NOTICE,
-            "next_step": "Scheme routing will be completed in the next stage.",
+            "next_step": "Check the financing option and loan-cap coverage for this saved calculation.",
         }
         analysis = self.analyses.save(FinancialAnalysis(
             user_id=user.id,
@@ -98,10 +98,10 @@ class FinancialService:
             "feasibility_analysis_id": analysis.feasibility_analysis_id,
             "available_margin_capital": money(analysis.available_margin_capital),
             "beneficiary_contribution": money(analysis.beneficiary_contribution),
-            "beneficiary_contribution_percentage": "10.00",
+            "beneficiary_contribution_percentage": format(BENEFICIARY_MARGIN_RATE * 100, ".2f"),
             "feasible_project_cost": money(analysis.feasible_project_cost),
             "indicative_loan_amount": money(analysis.indicative_loan_amount),
-            "indicative_loan_percentage": "90.00",
+            "indicative_loan_percentage": format(LOAN_SHARE_RATE * 100, ".2f"),
             "business_costs": analysis.business_cost_snapshot,
             **analysis.result_snapshot,
         })

@@ -3,6 +3,7 @@ from typing import Iterable
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 
+from app.models.business import BusinessProfile
 from app.models.profile import EntrepreneurResource, EntrepreneurSkill, ExistingBusiness
 from app.models.user import User
 from app.repositories.profile_repository import ProfileRepository
@@ -21,6 +22,10 @@ class ProfileService:
         return self._response(user, profile)
 
     def upsert(self, user: User, payload: ProfileUpdate) -> ProfileResponse:
+        if payload.proposed_business_id is not None:
+            business = self.db.get(BusinessProfile, payload.proposed_business_id)
+            if business is None or not business.is_active:
+                raise HTTPException(status_code=422, detail="Select an active supported proposed business.")
         profile = self.profiles.get_for_user(user) or self.profiles.create_for_user(user)
         values = payload.model_dump(exclude_unset=True, exclude={"full_name", "preferred_language", "skills", "resources", "existing_business"})
         for field, value in values.items():
@@ -59,6 +64,6 @@ class ProfileService:
     def _resources(items: Iterable[SelectionItem]):
         return [EntrepreneurResource(name=item.name, other_description=item.other_description) for item in items]
 
-    @staticmethod
-    def _response(user: User, profile) -> ProfileResponse:
-        return ProfileResponse(full_name=user.full_name, preferred_language=user.preferred_language, age_group=profile.age_group, education=profile.education, previous_experience=profile.previous_experience, state=profile.state, district=profile.district, taluka=profile.taluka, village=profile.village, pincode=profile.pincode, latitude=profile.latitude, longitude=profile.longitude, capital_range=profile.capital_range, own_capital=profile.own_capital, loan_required=profile.loan_required, skills=[SelectionItem.model_validate(item, from_attributes=True) for item in profile.skills], resources=[SelectionItem.model_validate(item, from_attributes=True) for item in profile.resources], has_existing_business=profile.has_existing_business, existing_business=profile.existing_business, onboarding_step=profile.onboarding_step, onboarding_completed=profile.onboarding_completed)
+    def _response(self, user: User, profile) -> ProfileResponse:
+        business = self.db.get(BusinessProfile, profile.proposed_business_id) if profile.proposed_business_id else None
+        return ProfileResponse(proposed_business_id=profile.proposed_business_id, proposed_business_name=business.name if business else None, full_name=user.full_name, preferred_language=user.preferred_language, age_group=profile.age_group, education=profile.education, previous_experience=profile.previous_experience, state=profile.state, district=profile.district, taluka=profile.taluka, village=profile.village, pincode=profile.pincode, latitude=profile.latitude, longitude=profile.longitude, capital_range=profile.capital_range, own_capital=profile.own_capital, loan_required=profile.loan_required, skills=[SelectionItem.model_validate(item, from_attributes=True) for item in profile.skills], resources=[SelectionItem.model_validate(item, from_attributes=True) for item in profile.resources], has_existing_business=profile.has_existing_business, existing_business=profile.existing_business, onboarding_step=profile.onboarding_step, onboarding_completed=profile.onboarding_completed)

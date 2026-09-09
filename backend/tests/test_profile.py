@@ -126,3 +126,38 @@ def test_profile_is_scoped_to_authenticated_user(client: TestClient, db_session:
     client.put("/api/v1/profile", headers=headers(first), json={"state": "Maharashtra", "onboarding_step": 2})
     assert client.get("/api/v1/profile", headers=headers(second)).status_code == 404
     assert db_session.scalar(select(func.count()).select_from(EntrepreneurProfile)) == profile_count + 1
+
+
+def test_proposed_business_persistence_and_clear(client, db_session):
+    from app.models.business import BusinessProfile
+    token = create_user(client, 'proposed')
+    business = db_session.scalar(select(BusinessProfile).where(BusinessProfile.is_active.is_(True)))
+    payload = complete_payload()
+    payload['proposed_business_id'] = str(business.id)
+    response = client.put('/api/v1/profile', headers=headers(token), json=payload)
+    assert response.status_code == 200, response.text
+    result = client.get('/api/v1/profile', headers=headers(token)).json()
+    assert result['proposed_business_id'] == str(business.id)
+    assert result['proposed_business_name'] == business.name
+    assert result['onboarding_completed'] is True
+    assert client.put('/api/v1/profile', headers=headers(token), json={'onboarding_step': 3}).json()['proposed_business_id'] == str(business.id)
+    assert client.put('/api/v1/profile', headers=headers(token), json={'onboarding_step': 3, 'proposed_business_id': None}).json()['proposed_business_id'] is None
+
+
+def test_proposed_business_invalid_and_inactive(client, db_session):
+    import uuid
+    from app.models.business import BusinessProfile
+    token = create_user(client, 'invalid-proposed')
+    for value in ['invalid', str(uuid.uuid4())]:
+        assert client.put('/api/v1/profile', headers=headers(token), json={'onboarding_step': 3, 'proposed_business_id': value}).status_code == 422
+    business = db_session.scalar(select(BusinessProfile))
+    business.is_active = False
+    db_session.flush()
+    assert client.put('/api/v1/profile', headers=headers(token), json={'onboarding_step': 3, 'proposed_business_id': str(business.id)}).status_code == 422
+
+
+def test_old_profile_proposed_business_nullable(client):
+    token = create_user(client, 'nullable-proposed')
+    result = client.put('/api/v1/profile', headers=headers(token), json=complete_payload())
+    assert result.status_code == 200
+    assert result.json()['proposed_business_id'] is None

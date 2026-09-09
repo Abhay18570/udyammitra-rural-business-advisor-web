@@ -545,11 +545,7 @@ h1, h2, h3, h4, h5, h6, p, a, button, label, dt, dd, li, span, strong, small, em
   height: 430px;
 }
 
-.market-map .leaflet-container {
-  height: 100%;
-  width: 100%;
-  z-index: 1;
-}
+
 
 /* --------------------------------------------------------------------------
    7. FINANCIAL PLAN & SMART CALCULATOR
@@ -1720,6 +1716,95 @@ h1, h2, h3, h4, h5, h6, p, a, button, label, dt, dd, li, span, strong, small, em
   }
 }
 
+/* Desktop collapse is independent of the tablet/mobile drawer state. */
+.sidebar .sidebar__toggle {
+  display: none;
+}
+
+.sidebar svg {
+  flex-shrink: 0;
+}
+
+@media (min-width: 1024px) {
+  .dashboard-layout {
+    --sidebar-width: 260px;
+  }
+
+  .dashboard-layout--collapsed {
+    --sidebar-width: 76px;
+  }
+
+  .dashboard-layout > .sidebar {
+    width: var(--sidebar-width);
+    transition: width 0.2s ease;
+  }
+
+  .dashboard-layout > .dashboard-main {
+    margin-left: var(--sidebar-width);
+    transition: margin-left 0.2s ease;
+  }
+
+  .sidebar__top {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .sidebar__top .brand {
+    padding: 0;
+  }
+
+  .sidebar .sidebar__toggle {
+    display: flex;
+    align-self: flex-end;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    margin-top: 12px;
+    color: #fff;
+  }
+
+  .sidebar .sidebar__toggle:hover,
+  .sidebar__bottom button:hover {
+    background: #ffffff16;
+    color: #fff;
+  }
+
+  .sidebar .sidebar__close {
+    display: none;
+  }
+
+  .dashboard-layout--collapsed .sidebar {
+    padding-inline: 10px;
+  }
+
+  .dashboard-layout--collapsed .sidebar__top {
+    padding-inline: 0;
+    align-items: center;
+  }
+
+  .dashboard-layout--collapsed .sidebar__toggle {
+    align-self: center;
+  }
+
+  .dashboard-layout--collapsed .sidebar__label,
+  .dashboard-layout--collapsed .sidebar .brand > span:not(.brand__mark) {
+    display: none;
+  }
+
+  .dashboard-layout--collapsed .sidebar a,
+  .dashboard-layout--collapsed .sidebar__bottom button {
+    justify-content: center;
+    gap: 0;
+    padding-inline: 0;
+  }
+
+  .dashboard-layout--collapsed .sidebar__bottom button {
+    width: 100%;
+  }
+}
+
 /* --------------------------------------------------------------------------
    REDUCED MOTION SUPPORT
    -------------------------------------------------------------------------- */
@@ -1733,3 +1818,61 @@ h1, h2, h3, h4, h5, h6, p, a, button, label, dt, dd, li, span, strong, small, em
     animation-iteration-count: 1 !important;
   }
 }
+
+/* Google Maps fills the responsive evidence panel, including sidebar transitions. */
+.market-map { height: 480px; }
+.map-message { height: 100%; display: grid; place-content: center; padding: 24px; text-align: center; background: var(--surface); }
+.map-provenance { font-size: 12px; line-height: 1.5; }
+.map-info { max-width: 260px; overflow-wrap: anywhere; }
+@media (max-width: 1023px) { .market-map { height: 410px; } }
+@media (max-width: 639px) { .market-map { height: 350px; } }
+
+/* Devanagari needs more vertical room than compact Latin labels. */
+html:lang(hi), html:lang(mr) {
+  font-family: "Noto Sans Devanagari", "Nirmala UI", Mangal, system-ui, sans-serif;
+}
+html:lang(hi) :is(button, label, th, nav a),
+html:lang(mr) :is(button, label, th, nav a) {
+  line-height: 1.6;
+  letter-spacing: normal;
+  overflow-wrap: anywhere;
+}
+
+/* Shared logo presentation; the supplied JPEG artwork remains unchanged. */
+.udyammitra-logo {
+  display: block;
+  flex: none;
+  object-fit: contain;
+  aspect-ratio: 1;
+  background: #fff;
+  border-radius: 6px;
+}
+.udyammitra-logo--small { width: 44px; height: 44px; }
+.udyammitra-logo--medium { width: 56px; height: 56px; }
+.udyammitra-logo--large { width: 78px; height: 78px; }
+.brand .brand__mark {
+  width: 56px;
+  height: 56px;
+  flex: none;
+  background: #fff;
+  border-radius: 6px;
+  box-shadow: none;
+}
+.brand .brand__mark .udyammitra-logo { width: 100%; height: 100%; }
+.brand > span:not(.brand__mark) { min-width: 0; }
+.sidebar .brand, .admin-layout .brand { min-width: 0; }
+.sidebar .brand small, .admin-layout .brand small { white-space: normal; line-height: 1.5; }
+.sidebar .brand .brand__mark, .admin-layout .brand .brand__mark { width: 48px; height: 48px; }
+@media (min-width: 1024px) {
+  .dashboard-layout--collapsed .sidebar .brand .brand__mark { width: 48px; height: 48px; }
+}
+@media (max-width: 767px) {
+  .brand .brand__mark { width: 46px; height: 46px; }
+}
+/* Let the adjacent tagline wrap on narrow headers without shrinking the image. */
+.site-header .brand { flex-shrink: 1; min-width: 0; }
+.site-header .menu-button { flex-shrink: 0; }
+
+/* Transparent artwork for inverse branding only; light navbar styling is unchanged. */
+.udyammitra-logo--transparent { background: transparent; border-radius: 0; }
+.brand--inverse .brand__mark { background: transparent; border-radius: 0; }

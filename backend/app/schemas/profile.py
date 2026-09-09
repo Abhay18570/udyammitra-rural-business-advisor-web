@@ -1,3 +1,4 @@
+import uuid
 from decimal import Decimal
 from typing import List, Optional
 
@@ -28,6 +29,7 @@ class ExistingBusinessPayload(BaseModel):
 
 
 class ProfileUpdate(BaseModel):
+    proposed_business_id: Optional[uuid.UUID] = None
     full_name: Optional[str] = Field(default=None, min_length=2, max_length=120)
     preferred_language: Optional[PreferredLanguage] = None
     age_group: Optional[AgeGroup] = None
@@ -81,6 +83,8 @@ class ExistingBusinessResponse(ExistingBusinessPayload):
 
 
 class ProfileResponse(BaseModel):
+    proposed_business_id: Optional[uuid.UUID] = None
+    proposed_business_name: Optional[str] = None
     model_config = ConfigDict(from_attributes=True)
     full_name: str
     preferred_language: PreferredLanguage

@@ -1,4 +1,4 @@
-"""Shared contracts for future analysis modules; no API endpoint is exposed yet."""
+"""Shared vocabulary for deterministic analysis modules."""
 
 import enum
 import uuid
@@ -8,6 +8,7 @@ from typing import Optional
 from pydantic import BaseModel, Field
 
 from app.models.business import BusinessCategory
+from app.scheme_rules import SchemeType  # Re-export shared scheme vocabulary.
 
 
 class AnalysisRadiusKm(int, enum.Enum):
@@ -30,6 +31,8 @@ class MoneyRounding(str, enum.Enum):
 
 class SchemeStatus(str, enum.Enum):
     ELIGIBLE = "ELIGIBLE"
+    ELIGIBLE_WITH_GAP = "ELIGIBLE_WITH_GAP"
+    OUT_OF_SUPPORTED_RANGE = "OUT_OF_SUPPORTED_RANGE"
     INELIGIBLE = "INELIGIBLE"
     VERIFICATION_REQUIRED = "VERIFICATION_REQUIRED"
 

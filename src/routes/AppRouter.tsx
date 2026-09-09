@@ -1,3 +1,4 @@
+import { useUi as useTextUi } from '../i18n/uiContextValue'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { AdminLayout } from '../layouts/AdminLayout'
 import { AuthLayout } from '../layouts/AuthLayout'
@@ -15,13 +16,17 @@ import { ProfilePage } from '../pages/user/ProfilePage'
 import { BusinessCatalogPage } from '../features/businessCatalog/BusinessCatalogPage'
 import { BusinessDetailPage } from '../features/businessCatalog/BusinessDetailPage'
 import { MarketAnalysisPage } from '../features/marketAnalysis/MarketAnalysisPage'
+import { BusinessAnalysisPage } from '../features/businessAnalysis/BusinessAnalysisPage'
+import { GovernmentSchemesPage } from '../features/schemes/GovernmentSchemesPage'
 import { FinancialPlanPage } from '../features/financial/FinancialPlanPage'
 
-const publicPages = ['about', 'how-it-works', 'features', 'schemes', 'privacy', 'terms', 'disclaimer']
-const userPages = ['business-health', 'documents', 'compliance', 'advisor', 'compare', 'my-analyses', 'reports', 'notifications', 'settings']
+const publicPages = ['about', 'how-it-works', 'features', 'privacy', 'terms', 'disclaimer']
+const userPages = ['documents', 'compliance', 'advisor', 'compare', 'my-analyses', 'reports', 'notifications', 'settings']
 const adminPages = ['dashboard', 'users', 'businesses', 'schemes', 'knowledge', 'map', 'reports', 'settings']
 
 export function AppRouter() {
+  const { text: textUi } = useTextUi()
+
   return (
     <BrowserRouter>
       <Routes>
@@ -36,17 +41,20 @@ export function AppRouter() {
         </Route>
         <Route element={<ProtectedRoute roles={['USER', 'ADMIN', 'SUPER_ADMIN']} />}>
           <Route element={<UserDashboardLayout />}>
+            <Route path="schemes" element={<GovernmentSchemesPage />} />
             <Route path="dashboard" element={<DashboardPage />} />
             <Route path="onboarding" element={<OnboardingPage />} />
             <Route path="profile" element={<ProfilePage />} />
             <Route path="market-analysis" element={<MarketAnalysisPage />} />
             <Route path="opportunities" element={<BusinessCatalogPage />} />
             <Route path="opportunities/:businessId" element={<BusinessDetailPage />} />
+            <Route path="business-analysis" element={<BusinessAnalysisPage />} />
+            <Route path="business-health" element={<Navigate to="/business-analysis" replace />} />
             <Route path="financial-plan" element={<FinancialPlanPage />} />
             <Route path="financial-plan/:businessId" element={<FinancialPlanPage />} />
             {userPages.map(path => <Route key={path} path={path} element={<PlaceholderPage area="Entrepreneur workspace" />} />)}
-            <Route path="financial-plan/:businessId/stress-test" element={<PlaceholderPage title="Financial Stress Test" area="Entrepreneur workspace" />} />
-            <Route path="reports/:reportId" element={<PlaceholderPage title="Feasibility Report" area="Entrepreneur workspace" />} />
+            <Route path="financial-plan/:businessId/stress-test" element={<PlaceholderPage title={textUi("Financial Stress Test")} area="Entrepreneur workspace" />} />
+            <Route path="reports/:reportId" element={<PlaceholderPage title={textUi("Feasibility Report")} area="Entrepreneur workspace" />} />
           </Route>
         </Route>
         <Route path="admin/login" element={<AuthLayout />}>

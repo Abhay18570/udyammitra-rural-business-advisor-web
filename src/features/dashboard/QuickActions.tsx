@@ -1,3 +1,5 @@
+import { useUi as useTextUi } from '../../i18n/uiContextValue'
+import { LocalizedText } from '../../i18n/LocalizedText'
 import { BarChart3, BriefcaseBusiness, Building2, Calculator, FileCheck2, FileText, HeartPulse, MessageSquareText } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import type { EntrepreneurProfile } from '../../types/profile'
@@ -24,9 +26,11 @@ const actions: ActionItem[] = [
 ]
 
 export function QuickActions({ profile }: { profile: EntrepreneurProfile }) {
-  return <section className="dashboard-section" aria-labelledby="quick-actions-title"><div className="dashboard-section__heading"><div><span className="eyebrow">Workspace</span><h2 id="quick-actions-title">Quick actions</h2></div></div><div className="quick-action-grid">{actions.map(({ title, to, description, icon: Icon, disabled, planned, businessOnly }) => {
+  const { text: textUi } = useTextUi()
+
+  return <section className="dashboard-section" aria-labelledby="quick-actions-title"><div className="dashboard-section__heading"><div><span className="eyebrow"><LocalizedText value={"Workspace"} /></span><h2 id="quick-actions-title"><LocalizedText value={"Quick actions"} /></h2></div></div><div className="quick-action-grid">{actions.map(({ title, to, description, icon: Icon, disabled, planned, businessOnly }) => {
     const subdued = businessOnly && !profile.hasExistingBusiness
-    const content = <><span className="quick-action__icon"><Icon aria-hidden="true" /></span><span className="quick-action__copy"><strong>{title}</strong><p>{subdued ? 'Add an existing business to your profile to use this analysis.' : description}</p></span>{planned && <small className="status-label">Not yet active</small>}{disabled && <small className="status-label">Coming later</small>}</>
-    return disabled ? <div key={title} className="quick-action quick-action--disabled" aria-disabled="true">{content}</div> : <Link key={title} className={subdued ? 'quick-action quick-action--subdued' : 'quick-action'} to={to!} aria-label={`${title}: ${subdued ? 'add a business to your profile first' : description}`}>{content}</Link>
+    const content = <><span className="quick-action__icon"><Icon aria-hidden="true" /></span><span className="quick-action__copy"><strong><LocalizedText value={title} /></strong><p><LocalizedText value={subdued ? 'Add an existing business to your profile to use this analysis.' : description} /></p></span>{planned && <small className="status-label"><LocalizedText value={"Not yet active"} /></small>}{disabled && <small className="status-label"><LocalizedText value={"Coming later"} /></small>}</>
+    return disabled ? <div key={title} className="quick-action quick-action--disabled" aria-disabled="true">{content}</div> : <Link key={title} className={subdued ? 'quick-action quick-action--subdued' : 'quick-action'} to={to!} aria-label={textUi(`${title}: ${subdued ? 'add a business to your profile first' : description}`)}>{content}</Link>
   })}</div></section>
 }

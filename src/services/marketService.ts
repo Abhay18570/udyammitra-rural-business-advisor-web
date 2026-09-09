@@ -1,4 +1,5 @@
 import axios from 'axios'
+import type { NearbyMarketEvidence } from '../types/nearbyMarket'
 import type { MarketAnalysis, MarketLocationsResponse } from '../types/market'
 import { apiClient } from './apiClient'
 
@@ -10,6 +11,10 @@ function fromWire<T>(value: unknown): T {
 }
 
 export const marketService = {
+  async nearby(businessQuery: string, radiusKm: number, signal?: AbortSignal): Promise<NearbyMarketEvidence> {
+    const response = await apiClient.post<NearbyMarketEvidence>('/market/nearby', { business_query: businessQuery, radius_km: radiusKm }, { signal, timeout: 60000 })
+    return response.data
+  },
   async locations(): Promise<MarketLocationsResponse> { return fromWire((await apiClient.get('/market/locations')).data) },
   async run(radiusKm: 5 | 10, demoLocationSlug?: string): Promise<MarketAnalysis> { return fromWire((await apiClient.post('/market/analysis', { radius_km: radiusKm, demo_location_slug: demoLocationSlug || undefined })).data) },
   async latest(): Promise<MarketAnalysis | null> { try { return fromWire((await apiClient.get('/market/analyses/latest')).data) } catch (error) { if (axios.isAxiosError(error) && error.response?.status === 404) return null; throw error } },

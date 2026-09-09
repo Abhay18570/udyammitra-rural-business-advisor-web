@@ -55,6 +55,7 @@ class EntrepreneurProfile(Base):
     __tablename__ = "entrepreneur_profiles"
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     user_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, unique=True, index=True)
+    proposed_business_id: Mapped[Optional[uuid.UUID]] = mapped_column(UUID(as_uuid=True), ForeignKey("business_profiles.id"), nullable=True, index=True)
     age_group: Mapped[Optional[AgeGroup]] = mapped_column(Enum(AgeGroup, name="age_group", native_enum=False, create_constraint=True, values_callable=enum_values))
     education: Mapped[Optional[EducationLevel]] = mapped_column(Enum(EducationLevel, name="education_level", native_enum=False, create_constraint=True, values_callable=enum_values))
     previous_experience: Mapped[Optional[ExperienceLevel]] = mapped_column(Enum(ExperienceLevel, name="experience_level", native_enum=False, create_constraint=True, values_callable=enum_values))
