@@ -2,11 +2,11 @@ import { BriefcaseBusiness, Calculator, ChartNoAxesCombined, Landmark, MapPin, M
 import { landingMessages as m } from '../i18n/landingMessages'
 
 export const carouselSlides = [
-  { id: 'discovery', image: 'rural-entrepreneur-woman.webp', alt: m.altWoman.en, eyebrow: m.discovery.en, title: m.discoveryTitle.en, description: m.discoveryText.en, action: m.opportunitiesCta.en, to: '/opportunities' },
-  { id: 'market', image: 'rural-kirana-owner.webp', alt: m.altKirana.en, eyebrow: m.market.en, title: m.marketTitle.en, description: m.marketText.en, action: m.marketCta.en, to: '/market-analysis' },
-  { id: 'finance', image: 'rural-tailoring-business.webp', alt: m.altTailor.en, eyebrow: m.finance.en, title: m.financeTitle.en, description: m.financeText.en, action: m.financeCta.en, to: '/financial-plan' },
-  { id: 'scheme', image: 'rural-dairy-entrepreneur.webp', alt: m.altDairy.en, eyebrow: m.scheme.en, title: m.schemeTitle.en, description: m.schemeText.en, action: m.schemeCta.en, to: '/schemes' },
-  { id: 'advisor', image: 'rural-agri-equipment.webp', alt: m.altAgri.en, eyebrow: m.advisor.en, title: m.advisorTitle.en, description: m.advisorText.en, action: m.soon.en, to: '/advisor', comingSoon: true },
+  { id: 'discovery', image: 'Bhaji.jpg', objectPosition: '55% 40%', alt: m.altWoman.en, eyebrow: m.discovery.en, title: m.discoveryTitle.en, highlight: m.heroDiscoveryHighlight.en, description: m.heroDiscoveryDescription.en, support: m.heroDiscoverySupport.en, action: m.opportunitiesCta.en, to: '/opportunities', secondaryAction: m.how.en, secondaryTo: '#how-it-works' },
+  { id: 'market', image: 'general.jpg', objectPosition: '45% 45%', alt: m.altKirana.en, eyebrow: m.heroMarketEyebrow.en, title: m.heroMarketTitle.en, highlight: m.heroMarketHighlight.en, description: m.heroMarketDescription.en, support: m.heroMarketSupport.en, action: m.marketCta.en, to: '/market-analysis', secondaryAction: m.how.en, secondaryTo: '#how-it-works' },
+  { id: 'finance', image: 'kirana.jpeg', objectPosition: '32% 40%', alt: m.altTailor.en, eyebrow: m.heroFinanceEyebrow.en, title: m.heroFinanceTitle.en, highlight: m.heroFinanceHighlight.en, description: m.heroFinanceDescription.en, support: m.heroFinanceSupport.en, action: m.financeCta.en, to: '/financial-plan', secondaryAction: m.how.en, secondaryTo: '#how-it-works' },
+  { id: 'scheme', image: 'masalas.jpg', objectPosition: '55% 50%', alt: m.altDairy.en, eyebrow: m.scheme.en, title: m.heroSchemeTitle.en, highlight: m.heroSchemeHighlight.en, description: m.heroSchemeDescription.en, support: m.heroSchemeSupport.en, action: m.schemeCta.en, to: '/schemes', secondaryAction: m.how.en, secondaryTo: '#how-it-works' },
+  { id: 'advisor', image: 'tea.jpg', objectPosition: '50% 40%', alt: m.altAgri.en, eyebrow: m.heroLanguageEyebrow.en, title: m.heroLanguageTitle.en, highlight: m.heroLanguageHighlight.en, description: m.heroLanguageDescription.en, support: m.heroLanguageSupport.en, action: 'Get Started', to: '/register', secondaryAction: m.how.en, secondaryTo: '#how-it-works' },
 ]
 export type CarouselSlide = typeof carouselSlides[number]
 export const landingServices = [

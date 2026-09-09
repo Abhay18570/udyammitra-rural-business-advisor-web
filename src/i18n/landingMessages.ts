@@ -385,5 +385,115 @@ export const landingMessages = {
     "en": "Use the text-size and language controls at the top of the page. All services support keyboard navigation.",
     "hi": "पृष्ठ के ऊपर पाठ आकार और भाषा नियंत्रणों का उपयोग करें। सभी सेवाओं में कीबोर्ड से नेविगेशन कर सकते हैं।",
     "mr": "पृष्ठाच्या वर मजकूर आकार आणि भाषा नियंत्रणे वापरा. सर्व सेवांमध्ये कीबोर्डने नेव्हिगेशन करता येते."
+  },
+  "heroDiscoveryDescription": {
+    "en": "Understand local demand, competition and opportunities around your location.",
+    "hi": "अपने स्थान के आसपास की मांग, प्रतिस्पर्धा और अवसरों को समझें।",
+    "mr": "तुमच्या ठिकाणाच्या आसपासची मागणी, स्पर्धा आणि संधी समजून घ्या."
+  },
+  "heroDiscoveryHighlight": {
+    "en": "Before You Invest",
+    "hi": "निवेश करने से पहले",
+    "mr": "गुंतवणूक करण्यापूर्वी"
+  },
+  "heroDiscoverySupport": {
+    "en": "Local context • Practical next steps",
+    "hi": "स्थानीय संदर्भ • व्यावहारिक अगले कदम",
+    "mr": "स्थानिक संदर्भ • व्यावहारिक पुढील पावले"
+  },
+  "heroMarketEyebrow": {
+    "en": "Hyper-Local Market Evidence",
+    "hi": "स्थानीय बाज़ार साक्ष्य",
+    "mr": "स्थानिक बाजाराचे पुरावे"
+  },
+  "heroMarketTitle": {
+    "en": "See What Businesses Exist Around You",
+    "hi": "देखें कि आपके आसपास कौन से व्यवसाय हैं",
+    "mr": "तुमच्या आसपास कोणते व्यवसाय आहेत ते पाहा"
+  },
+  "heroMarketHighlight": {
+    "en": "Within 1–10 km",
+    "hi": "1–10 किमी के भीतर",
+    "mr": "1–10 किमी परिसरात"
+  },
+  "heroMarketDescription": {
+    "en": "Analyze nearby shops and competitors using location-based market evidence.",
+    "hi": "स्थान-आधारित बाज़ार साक्ष्यों से आसपास की दुकानों और प्रतिस्पर्धियों का विश्लेषण करें।",
+    "mr": "स्थानावर आधारित बाजार पुराव्यांच्या मदतीने आसपासची दुकाने आणि स्पर्धकांचे विश्लेषण करा."
+  },
+  "heroMarketSupport": {
+    "en": "Nearby competition • Selected-radius analysis",
+    "hi": "आसपास की प्रतिस्पर्धा • चुनी गई दूरी का विश्लेषण",
+    "mr": "आसपासची स्पर्धा • निवडलेल्या परिसराचे विश्लेषण"
+  },
+  "heroFinanceEyebrow": {
+    "en": "Smart Financial Planning",
+    "hi": "समझदारी से वित्तीय योजना",
+    "mr": "सुजाण आर्थिक नियोजन"
+  },
+  "heroFinanceTitle": {
+    "en": "Turn Your Contribution Into a Practical Business Plan",
+    "hi": "अपने योगदान से एक व्यावहारिक व्यवसाय योजना बनाएँ",
+    "mr": "तुमच्या योगदानातून व्यावहारिक व्यवसाय योजना तयार करा"
+  },
+  "heroFinanceHighlight": {
+    "en": "Know Your Funding Need",
+    "hi": "अपनी वित्तीय ज़रूरत जानें",
+    "mr": "तुमची निधीची गरज जाणून घ्या"
+  },
+  "heroFinanceDescription": {
+    "en": "Estimate project cost, contribution, financing requirement and planning gaps.",
+    "hi": "परियोजना लागत, योगदान, वित्तीय आवश्यकता और योजना में कमियों का अनुमान लगाएँ।",
+    "mr": "प्रकल्प खर्च, योगदान, वित्तपुरवठ्याची गरज आणि नियोजनातील तुटीचा अंदाज घ्या."
+  },
+  "heroFinanceSupport": {
+    "en": "Project cost • Contribution • Funding requirement",
+    "hi": "परियोजना लागत • योगदान • वित्तीय आवश्यकता",
+    "mr": "प्रकल्प खर्च • योगदान • निधीची गरज"
+  },
+  "heroSchemeTitle": {
+    "en": "Understand the Financing Path That Fits Your Project",
+    "hi": "अपनी परियोजना के अनुकूल वित्तीय मार्ग समझें",
+    "mr": "तुमच्या प्रकल्पाला अनुरूप वित्तपुरवठ्याचा मार्ग समजून घ्या"
+  },
+  "heroSchemeHighlight": {
+    "en": "Micro Finance or Term Loan",
+    "hi": "सूक्ष्म वित्त या सावधि ऋण",
+    "mr": "सूक्ष्म वित्त किंवा मुदत कर्ज"
+  },
+  "heroSchemeDescription": {
+    "en": "Get rule-based scheme guidance based on project cost and contribution.",
+    "hi": "परियोजना लागत और योगदान के आधार पर नियम-आधारित योजना मार्गदर्शन पाएँ।",
+    "mr": "प्रकल्प खर्च आणि योगदानानुसार नियमांवर आधारित योजना मार्गदर्शन मिळवा."
+  },
+  "heroSchemeSupport": {
+    "en": "Transparent rules • Terms subject to verification",
+    "hi": "पारदर्शी नियम • सत्यापन के अधीन शर्तें",
+    "mr": "पारदर्शक नियम • पडताळणीच्या अधीन अटी"
+  },
+  "heroLanguageEyebrow": {
+    "en": "Business Guidance in Your Language",
+    "hi": "आपकी भाषा में व्यवसाय मार्गदर्शन",
+    "mr": "तुमच्या भाषेत व्यवसाय मार्गदर्शन"
+  },
+  "heroLanguageTitle": {
+    "en": "Plan Your Business With Clear Local Guidance",
+    "hi": "स्पष्ट स्थानीय मार्गदर्शन से अपने व्यवसाय की योजना बनाएँ",
+    "mr": "स्पष्ट स्थानिक मार्गदर्शनासह तुमच्या व्यवसायाचे नियोजन करा"
+  },
+  "heroLanguageHighlight": {
+    "en": "English • हिंदी • मराठी",
+    "hi": "English • हिंदी • मराठी",
+    "mr": "English • हिंदी • मराठी"
+  },
+  "heroLanguageDescription": {
+    "en": "Access UdyamMitra guidance in the language you are most comfortable with.",
+    "hi": "अपनी सबसे सहज भाषा में UdyamMitra का मार्गदर्शन पाएँ।",
+    "mr": "तुम्हाला सर्वात सोयीच्या भाषेत UdyamMitra चे मार्गदर्शन मिळवा."
+  },
+  "heroLanguageSupport": {
+    "en": "Your language • Your business journey",
+    "hi": "आपकी भाषा • आपकी व्यवसाय यात्रा",
+    "mr": "तुमची भाषा • तुमचा व्यवसाय प्रवास"
   }
 } satisfies Record<string, Message>

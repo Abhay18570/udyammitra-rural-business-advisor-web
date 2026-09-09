@@ -188,3 +188,95 @@ html:lang(hi) .landing-shell .nav,html:lang(mr) .landing-shell .nav { line-heigh
 @media(prefers-reduced-motion:reduce) {
   .landing-shell *, .landing-shell *::before,.landing-shell *::after { animation:none!important; transition:none!important; scroll-behavior:auto!important; }
 }
+
+/* Motion is an enhancement: static content never depends on an observer to be visible. */
+@keyframes portal-fade-up {
+  from { opacity: .15; transform: translateY(12px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes portal-fade-in { from { opacity: .25; } to { opacity: 1; } }
+@keyframes portal-fade-down {
+  from { opacity: .4; transform: translateY(-6px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes portal-scale-in {
+  from { opacity: .4; transform: scale(.96); }
+  to { opacity: 1; transform: none; }
+}
+.portal-highlight {
+  display: block;
+  color: #ffd49e;
+  font-size: clamp(1.125rem, 1.8vw, 1.5rem);
+  line-height: 1.65;
+  margin: -8px 0 14px;
+  overflow-wrap: anywhere;
+}
+.portal-slide-support {
+  display: block;
+  max-width: 640px;
+  color: #c9d9e5;
+  font-size: .8125rem;
+  line-height: 1.85;
+  margin-top: 18px;
+}
+.portal-slide__copy { min-width: 0; }
+.portal-slide__copy :is(h1, h2, p) { overflow-wrap: anywhere; }
+/* Outgoing text clears promptly while the existing image crossfade continues. */
+.portal-slide:not(.is-active) .portal-slide__copy { opacity: 0; transition: opacity 150ms ease; }
+.portal-slide.is-active .portal-slide__copy { opacity: 1; }
+.landing-shell :is(.portal-button, .public-register-link):active { transform: translateY(1px); }
+.landing-shell :is(.portal-button, .public-register-link):focus-visible { outline: 3px solid #f2a35f; outline-offset: 4px; }
+.portal-service__arrow, .portal-button svg, .portal-service>svg:first-child { transition: transform 180ms ease; }
+.portal-scheme { transition: transform 200ms ease, border-color 200ms ease, box-shadow 200ms ease; }
+.portal-scheme:focus-within, .portal-schemes:focus-within .portal-scheme { border-color: #287354; box-shadow: 0 8px 24px #153d5712; }
+@media (hover: hover) {
+  .portal-service:hover .portal-service__arrow, .portal-button:hover svg { transform: translateX(3px); }
+  .portal-service:hover>svg:first-child { transform: scale(1.04); }
+  .portal-scheme:hover { transform: translateY(-3px); border-color: #287354; box-shadow: 0 8px 24px #153d5712; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .landing-shell [data-reveal].portal-revealed { animation: portal-fade-up 480ms ease var(--reveal-delay, 0ms) backwards; }
+  .landing-shell [data-reveal="fade-in"].portal-revealed { animation-name: portal-fade-in; }
+  .landing-shell .portal-feature.portal-revealed .portal-icon { animation: portal-scale-in 420ms ease var(--reveal-delay, 0ms) backwards; }
+  .landing-shell .utility-bar { animation: portal-fade-in 320ms ease backwards; }
+  /* Animate the row, not the sticky header: fixed menus retain their positioning context. */
+  .landing-shell .header-row { animation: portal-fade-down 360ms ease backwards; }
+  .landing-shell .site-header .brand__mark { animation: portal-scale-in 400ms ease backwards; }
+  .landing-shell .nav>a { animation: portal-fade-in 340ms ease backwards; }
+  .landing-shell .nav>a:nth-child(2) { animation-delay: 40ms; }
+  .landing-shell .nav>a:nth-child(3) { animation-delay: 80ms; }
+  .landing-shell .nav>a:nth-child(4) { animation-delay: 120ms; }
+  .landing-shell .nav>a:nth-child(5) { animation-delay: 160ms; }
+  .landing-shell .nav>a:nth-child(6) { animation-delay: 200ms; }
+  .landing-shell .nav>a:nth-child(7) { animation-delay: 240ms; }
+  .landing-shell .nav>a.public-register-link { animation-delay: 280ms; }
+  /* Keep a readable overlay at every frame, even over a bright licensed photo. */
+  .landing-shell .portal-slide.is-active .portal-overlay { animation: portal-overlay-in 400ms ease backwards; }
+  .landing-shell .portal-slide.is-active .portal-eyebrow { animation: portal-fade-up 400ms ease backwards; }
+  .landing-shell .portal-slide.is-active :is(h1,h2) { animation: portal-fade-up 420ms ease 50ms backwards; }
+  .landing-shell .portal-slide.is-active .portal-highlight { animation: portal-fade-up 420ms ease 100ms backwards; }
+  .landing-shell .portal-slide.is-active .portal-slide-description { animation: portal-fade-in 420ms ease 150ms backwards; }
+  .landing-shell .portal-slide.is-active .portal-actions>:first-child { animation: portal-fade-up 400ms ease 200ms backwards; }
+  .landing-shell .portal-slide.is-active .portal-actions>:nth-child(2) { animation: portal-fade-up 400ms ease 250ms backwards; }
+  .landing-shell .portal-slide.is-active .portal-slide-support { animation: portal-fade-in 400ms ease 250ms backwards; }
+  .landing-shell .portal-carousel-controls { animation: portal-fade-in 350ms ease 300ms backwards; }
+  .landing-shell :is(a, button):focus-visible,
+  .landing-shell [data-reveal]:focus-within,
+  .landing-shell .portal-slide__copy:focus-within > *,
+  .landing-shell .portal-actions:focus-within > * { animation: none; }
+}
+@keyframes portal-overlay-in { from { opacity: .95; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  .landing-shell [data-reveal] { opacity: 1; transform: none; }
+  .landing-shell :is(.portal-button, .portal-service, .portal-explore, .portal-scheme):hover,
+  .landing-shell :is(.portal-button, .public-register-link):active,
+  .landing-shell .portal-service:hover svg,
+  .landing-shell .portal-button:hover svg { transform: none; }
+}
+
+/* The active pill tracks the same five-second countdown as autoplay. */
+.portal-dots button[aria-current=true] span { position:relative; overflow:hidden; background:#b67835; }
+.portal-dot-progress { display:block; width:100%; height:100%; background:#f5ad61; transform:scaleX(0); transform-origin:left center; }
+@media (prefers-reduced-motion: reduce) {
+  .portal-dot-progress { transform:none; }
+}

@@ -5,7 +5,8 @@ import { Link } from 'react-router-dom'
 import { useUi } from '../../i18n/uiContextValue'
 import { landingMessages as m } from '../../i18n/landingMessages'
 import { carouselSlides, landingImageFolder, type CarouselSlide } from '../../data/landingPortal'
-import { canRotate, carouselReducer, scheduleRotation, type ImageState } from './carouselState'
+import { preloadCarouselImages } from './preloadCarouselImages'
+import { canRotate, carouselReducer, scheduleRotation, ROTATION_MS, type ImageState } from './carouselState'
 
 export function HeroSlide({ slide, active, first, loadImage, imageState, onImageState }: {
   slide: CarouselSlide; active: boolean; first: boolean; loadImage: boolean
@@ -19,28 +20,44 @@ export function HeroSlide({ slide, active, first, loadImage, imageState, onImage
   return <article className={`portal-slide portal-slide--${slide.id} ${active ? 'is-active' : ''}`} aria-hidden={!active} inert={!active}
     role="group" aria-roledescription={text(m.slide.en)} aria-label={text(slide.eyebrow)}>
     <div className="portal-art" aria-hidden="true"><div className="portal-art__sun" /><div className="portal-art__field" /><div className="portal-art__seal"><UdyamMitraLogo variant="transparent" size="large" decorative /><span>UdyamMitra</span><small>{text(m.fallback.en)}</small></div></div>
-    {loadImage && imageState !== 'error' && <img ref={image} className={`portal-photo ${imageState === 'loaded' ? 'is-loaded' : ''}`} src={landingImageFolder + slide.image} alt={text(slide.alt)}
+    {loadImage && imageState !== 'error' && <img ref={image} className={`portal-photo ${imageState === 'loaded' ? 'is-loaded' : ''}`} src={landingImageFolder + slide.image} alt="" aria-hidden="true" style={{ objectPosition: slide.objectPosition }}
       fetchPriority={first ? 'high' : 'low'} loading="eager" decoding="async" onLoad={() => onImageState('loaded')} onError={() => onImageState('error')} />}
     <div className="portal-overlay" />
     {active && loadImage && imageState === 'loading' && <span className="portal-image-loading" role="status"><span className="sr-only">{text(m.loading.en)}</span></span>}
     <div className="portal-container portal-slide__body">
       <div className="portal-slide__copy"><span className="portal-eyebrow"><i />{text(slide.eyebrow)}</span>
         {first ? <h1>{text(slide.title)}</h1> : <h2>{text(slide.title)}</h2>}
-        <p>{text(slide.description)}</p><div className="portal-actions">
-          {slide.comingSoon ? <span className="portal-coming">{text(m.soon.en)}</span> : <Link className="portal-button" to={slide.to}>{text(slide.action)}<ArrowRight aria-hidden="true" size={18} /></Link>}
-          <a className="portal-button portal-button--glass" href="#how-it-works">{text(m.how.en)}</a>
+        <strong className="portal-highlight">{text(slide.highlight)}</strong>
+        <p className="portal-slide-description">{text(slide.description)}</p><div className="portal-actions">
+          <Link className="portal-button" to={slide.to}>{text(slide.action)}<ArrowRight aria-hidden="true" size={18} /></Link>
+          <a className="portal-button portal-button--glass" href={slide.secondaryTo}>{text(slide.secondaryAction)}</a>
         </div>
+        <small className="portal-slide-support">{text(slide.support)}</small>
       </div>
     </div>
   </article>
 }
 
-export function CarouselControls({ index, paused, onPrevious, onNext, onSelect, onPause, text }: {
-  text: (value: string) => string; index: number; paused: boolean; onPrevious: () => void; onNext: () => void; onSelect: (index: number) => void; onPause: () => void
+function ProgressFill({ running }: { running: boolean }) {
+  const fill = useRef<HTMLElement>(null)
+  const animation = useRef<Animation | null>(null)
+  useEffect(() => {
+    if (!running || !fill.current?.animate) return
+    animation.current?.cancel()
+    const current = fill.current.animate([{ transform: 'scaleX(0)' }, { transform: 'scaleX(1)' }], { duration: ROTATION_MS, fill: 'forwards' })
+    animation.current = current
+    return () => current.pause()
+  }, [running])
+  useEffect(() => () => animation.current?.cancel(), [])
+  return <b ref={fill} className="portal-dot-progress" aria-hidden="true" />
+}
+
+export function CarouselControls({ index, paused, onPrevious, onNext, onSelect, onPause, text, rotating = false, revision = 0 }: {
+  rotating?: boolean; revision?: number; text: (value: string) => string; index: number; paused: boolean; onPrevious: () => void; onNext: () => void; onSelect: (index: number) => void; onPause: () => void
 }) {
   return <div className="portal-carousel-controls">
     <button onClick={onPrevious} aria-label={text(m.previous.en)}><ArrowLeft aria-hidden="true" size={19} /></button>
-    <div className="portal-dots">{carouselSlides.map((slide, i) => <button key={slide.id} aria-label={`${text(m.slide.en)} ${i + 1}: ${text(slide.eyebrow)}`} aria-current={i === index ? 'true' : undefined} onClick={() => onSelect(i)}><span /></button>)}</div>
+    <div className="portal-dots">{carouselSlides.map((slide, i) => <button key={slide.id} aria-label={`${text(m.slide.en)} ${i + 1}: ${text(slide.eyebrow)}`} aria-current={i === index ? 'true' : undefined} onClick={() => onSelect(i)}><span>{i === index && <ProgressFill key={revision} running={rotating} />}</span></button>)}</div>
     <button onClick={onNext} aria-label={text(m.next.en)}><ArrowRight aria-hidden="true" size={19} /></button>
     <button onClick={onPause} aria-label={text(paused ? m.play.en : m.pause.en)} aria-pressed={paused}>{paused ? <Play aria-hidden="true" size={17} /> : <Pause aria-hidden="true" size={17} />}</button>
   </div>
@@ -64,12 +81,13 @@ export function HeroCarousel() {
     document.addEventListener('visibilitychange', updateVisibility)
     return () => { media.removeEventListener('change', updateMotion); document.removeEventListener('visibilitychange', updateVisibility) }
   }, [])
-  // Warm only the next image, after the current image has settled. Retain visited images.
-  const currentImage = images[carouselSlides[state.index].id]
+  // Defer the other four requests until mount; prioritize the first visible image.
+  useEffect(() => preloadCarouselImages((id, value) => {
+    setImages(previous => previous[id] === value ? previous : { ...previous, [id]: value })
+  }), [])
   const rotating = canRotate(reducedMotion, hidden, hovered, focused, paused)
   useEffect(() => scheduleRotation(() => dispatch({ type: 'tick' }), rotating), [rotating, state.revision])
   return <section className="portal-carousel" tabIndex={0} role="region" aria-roledescription={text(m.carousel.en)} aria-label={text(m.carousel.en)}
-    onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}
     onFocusCapture={() => setFocused(true)} onBlurCapture={event => { if (!event.currentTarget.contains(event.relatedTarget)) setFocused(false) }}
     onKeyDown={event => {
       if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') { event.preventDefault(); event.currentTarget.focus(); dispatch({ type: event.key === 'ArrowRight' ? 'next' : 'previous' }) }
@@ -84,10 +102,10 @@ export function HeroCarousel() {
       touch.current = null
     }}>
     <div className="portal-slides">{carouselSlides.map((slide, i) => <HeroSlide key={slide.id} slide={slide} active={i === state.index} first={i === 0}
-      loadImage={images[slide.id] !== undefined || i === state.index || (!hidden && currentImage !== undefined && currentImage !== 'loading' && i === (state.index + 1) % carouselSlides.length)} imageState={images[slide.id] ?? 'loading'}
+      loadImage={images[slide.id] !== undefined || i === state.index} imageState={images[slide.id] ?? 'loading'}
       onImageState={value => setImages(previous => previous[slide.id] === value ? previous : { ...previous, [slide.id]: value })} />)}</div>
-    <div className="portal-container portal-carousel-bottom"><span className="portal-carousel-brand">UdyamMitra <i /> {String(state.index + 1).padStart(2, '0')} / 05</span>
-      <CarouselControls text={text} index={state.index} paused={paused} onPrevious={() => dispatch({ type: 'previous' })} onNext={() => dispatch({ type: 'next' })} onSelect={index => dispatch({ type: 'select', index })} onPause={() => setPaused(value => !value)} />
+    <div className="portal-container portal-carousel-bottom" onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}><span className="portal-carousel-brand">UdyamMitra <i /> {String(state.index + 1).padStart(2, '0')} / 05</span>
+      <CarouselControls rotating={rotating} revision={state.revision} text={text} index={state.index} paused={paused} onPrevious={() => dispatch({ type: 'previous' })} onNext={() => dispatch({ type: 'next' })} onSelect={index => dispatch({ type: 'select', index })} onPause={() => { setPaused(value => !value); setHovered(false); setFocused(false) }} />
     </div>
     <span className="sr-only" aria-live={rotating ? 'off' : 'polite'} aria-atomic="true">{text(m.slide.en)} {state.index + 1}: {text(carouselSlides[state.index].eyebrow)}</span>
   </section>

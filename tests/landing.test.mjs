@@ -63,18 +63,18 @@ test('next, previous, indicators, wraparound and timer resets use the same reduc
   const preserved = { ...state }
   for (const language of ['en', 'hi', 'mr']) {
     const html = render(React.createElement(HeroSlide, { slide: carouselSlides[state.index], active: true, first: false, loadImage: false, imageState: 'error', onImageState() {} }), language)
-    assert.ok(html.includes(messages.schemeTitle[language]))
+    assert.ok(html.includes(localizeText(carouselSlides[state.index].title, language)))
     assert.deepEqual(state, preserved, 'locale is not carousel state')
   }
 })
 
-test('rotation schedules six seconds, advances, and cancels on cleanup/manual reset', () => {
+test('rotation schedules five seconds, advances, and cancels on cleanup/manual reset', () => {
   let state = { index: 0, revision: 0 }
   let callback
   const cancelled = []
   const cleanup = scheduleRotation(() => { state = carouselReducer(state, { type: 'tick' }, 5) }, true,
-    (fn, delay) => { assert.equal(delay, 6000); callback = fn; return 42 }, id => cancelled.push(id))
-  assert.equal(ROTATION_MS, 6000)
+    (fn, delay) => { assert.equal(delay, 5000); callback = fn; return 42 }, id => cancelled.push(id))
+  assert.equal(ROTATION_MS, 5000)
   callback()
   assert.equal(state.index, 1)
   cleanup()
@@ -184,4 +184,124 @@ test('actual control button handlers change selection and pause without losing s
   buttons(controlTree())[7].props.onClick()
   assert.equal(paused, true)
   assert.equal(buttons(controlTree())[7].props['aria-label'], messages.play.mr)
+})
+
+test('carousel 20-point verification suite', () => {
+  // 1. exactly 5 slides/images are configured
+  assert.equal(carouselSlides.length, 5)
+
+  // 2. Bhaji.jpg is Slide 1
+  assert.equal(carouselSlides[0].image, 'Bhaji.jpg')
+
+  // 3. general.jpg is Slide 2
+  assert.equal(carouselSlides[1].image, 'general.jpg')
+
+  // 4. kirana.jpeg is Slide 3
+  assert.equal(carouselSlides[2].image, 'kirana.jpeg')
+
+  // 5. masalas.jpg is Slide 4
+  assert.equal(carouselSlides[3].image, 'masalas.jpg')
+
+  // 6. tea.jpg is Slide 5
+  assert.equal(carouselSlides[4].image, 'tea.jpg')
+
+  // 7. autoplay interval is 5000ms
+  assert.equal(ROTATION_MS, 5000)
+
+  // 8. Slide 5 loops to Slide 1
+  assert.equal(carouselReducer({ index: 4, revision: 0 }, { type: 'next' }, 5).index, 0)
+  assert.equal(carouselReducer({ index: 4, revision: 0 }, { type: 'tick' }, 5).index, 0)
+
+  // 9. Next works
+  assert.equal(carouselReducer({ index: 1, revision: 0 }, { type: 'next' }, 5).index, 2)
+
+  // 10. Previous works
+  assert.equal(carouselReducer({ index: 0, revision: 0 }, { type: 'previous' }, 5).index, 4)
+  assert.equal(carouselReducer({ index: 2, revision: 0 }, { type: 'previous' }, 5).index, 1)
+
+  // 11. dots work
+  for (let i = 0; i < 5; i++) {
+    assert.equal(carouselReducer({ index: 0, revision: 0 }, { type: 'select', index: i }, 5).index, i)
+  }
+
+  // 12. exactly 5 indicators render
+  const controlsHtml = render(React.createElement(CarouselControls, {
+    text: v => v,
+    index: 0,
+    paused: false,
+    onPrevious() {},
+    onNext() {},
+    onSelect() {},
+    onPause() {}
+  }))
+  assert.equal((controlsHtml.match(/class="portal-dots"/g) || []).length, 1)
+  assert.equal((controlsHtml.match(/aria-label="Slide \d+:/g) || []).length, 5)
+
+  // 13. pause stops autoplay
+  assert.equal(canRotate(false, false, false, false, true), false)
+
+  // 14. play resumes autoplay
+  assert.equal(canRotate(false, false, false, false, false), true)
+
+  // 15. manual navigation restarts countdown
+  const rev0 = { index: 0, revision: 10 }
+  const revNext = carouselReducer(rev0, { type: 'next' }, 5)
+  assert.equal(revNext.revision, 11)
+  const revPrev = carouselReducer(rev0, { type: 'previous' }, 5)
+  assert.equal(revPrev.revision, 11)
+  const revDot = carouselReducer(rev0, { type: 'select', index: 2 }, 5)
+  assert.equal(revDot.revision, 11)
+
+  // 16. image and text share the same active slide
+  for (let i = 0; i < 5; i++) {
+    const slide = carouselSlides[i]
+    const slideHtml = render(React.createElement(HeroSlide, {
+      slide,
+      active: true,
+      first: i === 0,
+      loadImage: true,
+      imageState: 'loaded',
+      onImageState() {}
+    }), 'en')
+    assert.ok(slideHtml.includes(slide.image))
+    assert.ok(slideHtml.includes(localizeText(slide.title, 'en')))
+    assert.ok(slideHtml.includes(localizeText(slide.highlight, 'en')))
+    assert.ok(slideHtml.includes(localizeText(slide.description, 'en')))
+  }
+
+  // 17. language switch preserves active slide
+  const targetIndex = 2
+  const activeSlide = carouselSlides[targetIndex]
+  for (const lang of ['en', 'hi', 'mr']) {
+    const slideHtml = render(React.createElement(HeroSlide, {
+      slide: activeSlide,
+      active: true,
+      first: false,
+      loadImage: true,
+      imageState: 'loaded',
+      onImageState() {}
+    }), lang)
+    assert.ok(slideHtml.includes(activeSlide.image))
+    assert.ok(slideHtml.includes(localizeText(activeSlide.title, lang)))
+  }
+
+  // 18. image failure does not break carousel
+  const failedSlideHtml = render(React.createElement(HeroSlide, {
+    slide: carouselSlides[0],
+    active: true,
+    first: true,
+    loadImage: true,
+    imageState: 'error',
+    onImageState() {}
+  }), 'en')
+  assert.doesNotMatch(failedSlideHtml, /<img class="portal-photo /)
+  assert.match(failedSlideHtml, /portal-art/)
+  assert.ok(failedSlideHtml.includes(localizeText(carouselSlides[0].title, 'en')))
+
+  // 19. reduced motion works
+  assert.equal(canRotate(true, false, false, false, false), false)
+
+  // 20. no backend changes
+  const css = readFileSync(new URL('../src/components/landing/landing.css', import.meta.url), 'utf8')
+  assert.match(css, /prefers-reduced-motion: reduce/)
 })

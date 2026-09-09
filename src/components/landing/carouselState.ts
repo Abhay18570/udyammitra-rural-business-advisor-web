@@ -1,4 +1,4 @@
-export const ROTATION_MS = 6000
+export const ROTATION_MS = 5000
 export type CarouselState = { index: number; revision: number }
 export type CarouselAction = { type: 'next' | 'previous' | 'tick' } | { type: 'select'; index: number }
 export function carouselReducer(state: CarouselState, action: CarouselAction, count: number): CarouselState {
