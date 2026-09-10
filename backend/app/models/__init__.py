@@ -12,3 +12,6 @@ from app.models.market_cache import GeocodingCache, NearbyQueryCache, ProviderRe
 
 __all__ += ["MarketPOI", "GeocodingCache", "NearbyQueryCache", "ProviderRequestState"]
 from app.models.business_analysis import BusinessAnalysis
+from app.models.government_scheme import GovernmentScheme
+
+__all__ += ["GovernmentScheme"]

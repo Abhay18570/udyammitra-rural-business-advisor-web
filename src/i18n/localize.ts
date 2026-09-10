@@ -1,3 +1,4 @@
+import { governmentSchemeMessages } from './governmentSchemeMessages'
 import { landingMessages } from './landingMessages'
 import { runtimeMessages } from './runtimeMessages'
 import { enumMessages } from './statusMessages'
@@ -8,7 +9,7 @@ export const supportedLanguages = ['en', 'hi', 'mr'] as const
 export function isLanguage(value: unknown): value is Language { return supportedLanguages.includes(value as Language) }
 const normalize = (value: string) => value.trim().replace(/\s+/g, ' ')
 const lookup = new Map<string, Record<Language, string>>()
-for (const group of Object.values({ landing: landingMessages, ...messages, ...Object.fromEntries(Object.entries(runtimeMessages).map(([key, value]) => [`runtime_${key}`, value])) })) for (const message of Object.values(group)) {
+for (const group of Object.values({ governmentSchemes: governmentSchemeMessages, landing: landingMessages, ...messages, ...Object.fromEntries(Object.entries(runtimeMessages).map(([key, value]) => [`runtime_${key}`, value])) })) for (const message of Object.values(group)) {
   lookup.set(normalize(message.en), message)
   lookup.set(normalize(message.en).toLowerCase(), message)
 }

@@ -20,7 +20,8 @@ import { BusinessCatalogPage } from '../features/businessCatalog/BusinessCatalog
 import { BusinessDetailPage } from '../features/businessCatalog/BusinessDetailPage'
 import { MarketAnalysisPage } from '../features/marketAnalysis/MarketAnalysisPage'
 import { BusinessAnalysisPage } from '../features/businessAnalysis/BusinessAnalysisPage'
-import { GovernmentSchemesPage } from '../features/schemes/GovernmentSchemesPage'
+import { GovernmentSchemeCatalogPage } from '../features/governmentSchemes/GovernmentSchemeCatalogPage'
+import { GovernmentSchemeDetailPage } from '../features/governmentSchemes/GovernmentSchemeDetailPage'
 import { FinancialPlanPage } from '../features/financial/FinancialPlanPage'
 
 const GeographicAnalyticsPage = lazy(() => import('../features/admin/GeographicAnalyticsPage').then(module => ({ default: module.GeographicAnalyticsPage })))
@@ -38,6 +39,8 @@ export function AppRouter() {
       <Routes>
         <Route element={<PublicLayout />}>
           <Route index element={<HomePage />} />
+          <Route path="government-schemes" element={<GovernmentSchemeCatalogPage />} />
+          <Route path="government-schemes/:slug" element={<GovernmentSchemeDetailPage />} />
           {publicPages.map(path => <Route key={path} path={path} element={<PlaceholderPage area="UdyamMitra" />} />)}
         </Route>
         <Route element={<AuthLayout />}>
@@ -47,7 +50,7 @@ export function AppRouter() {
         </Route>
         <Route element={<ProtectedRoute roles={['USER']} />}>
           <Route element={<UserDashboardLayout />}>
-            <Route path="schemes" element={<GovernmentSchemesPage />} />
+            <Route path="schemes" element={<GovernmentSchemeCatalogPage />} />
             <Route path="dashboard" element={<DashboardPage />} />
             <Route path="onboarding" element={<OnboardingPage />} />
             <Route path="profile" element={<ProfilePage />} />

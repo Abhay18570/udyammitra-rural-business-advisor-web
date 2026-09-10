@@ -25,3 +25,6 @@ router.include_router(business_analysis_router, prefix='/business-analysis', tag
 
 from app.api.v1.endpoints.admin import router as admin_router
 router.include_router(admin_router, prefix="/admin", tags=["administration"])
+
+from app.api.v1.endpoints.government_schemes import router as government_scheme_router
+router.include_router(government_scheme_router, prefix='/government-schemes', tags=['government scheme catalog'])

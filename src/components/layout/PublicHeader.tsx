@@ -10,7 +10,7 @@ import { Brand } from '../common/Brand'
 import { ButtonLink } from '../ui/Button'
 import { LanguageSelector } from './LanguageSelector'
 
-const navTargets = ['/', '/how-it-works', '/opportunities', '/market-analysis', '/schemes', '/about']
+const navTargets = ['/', '/how-it-works', '/opportunities', '/market-analysis', '/government-schemes', '/about']
 
 export function PublicHeader({ landing = false }: { landing?: boolean }) {
   const { isAuthenticated } = useAuth()

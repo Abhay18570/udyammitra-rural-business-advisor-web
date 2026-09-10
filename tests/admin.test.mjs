@@ -95,3 +95,93 @@ test('admin CSS styles high-contrast sidebar branding and header language select
  assert.match(css,/@media\(max-width:600px\)\s*\{[^}]*\.officer-header\s*\{[^}]*flex-direction:\s*column/)
 })
 
+test('admin sidebar is expanded by default and toggles collapsed state with localStorage',()=>{
+  const prior = Object.getOwnPropertyDescriptor(globalThis, 'localStorage')
+  try {
+    // 1. Default expanded when no preference
+    Object.defineProperty(globalThis, 'localStorage', { configurable: true, value: { getItem: () => null, setItem: () => {} } })
+    const expandedHtml = render(React.createElement(AdminDashboardLayout))
+    assert.match(expandedHtml, /class="officer-layout"/)
+    assert.doesNotMatch(expandedHtml, /officer-layout--collapsed/)
+    assert.match(expandedHtml, /aria-label="Collapse sidebar"/)
+    assert.match(expandedHtml, /title="Collapse sidebar"/)
+    assert.match(expandedHtml, /aria-expanded="true"/)
+    assert.match(expandedHtml, /aria-controls="officer-sidebar"/)
+    assert.match(expandedHtml, /lucide-panel-left-close/)
+
+    // 2. Persisted collapsed
+    Object.defineProperty(globalThis, 'localStorage', { configurable: true, value: { getItem: (k) => k === 'udyammitra.admin.sidebar.collapsed' ? 'true' : null, setItem: () => {} } })
+    const collapsedHtml = render(React.createElement(AdminDashboardLayout))
+    assert.match(collapsedHtml, /class="officer-layout officer-layout--collapsed"/)
+    assert.match(collapsedHtml, /aria-label="Expand sidebar"/)
+    assert.match(collapsedHtml, /title="Expand sidebar"/)
+    assert.match(collapsedHtml, /aria-expanded="false"/)
+    assert.match(collapsedHtml, /lucide-panel-left-open/)
+  } finally {
+    if (prior) Object.defineProperty(globalThis, 'localStorage', prior)
+    else delete globalThis.localStorage
+  }
+})
+
+test('admin navigation items have dedicated icons, accessible labels and active route indicator',()=>{
+  function renderWithRoute(initialEntry = '/admin/dashboard') {
+    return renderToStaticMarkup(
+      React.createElement(UiContext.Provider, { value: { text: v => localizeText(v, 'en'), language: 'en', t: translations.en, setLanguage: () => {} } },
+        React.createElement(AuthContext.Provider, { value: { user: { role: 'ADMIN', email: 'officer@example.com' }, isAuthenticated: true, isLoading: false, logout: () => {} } },
+          React.createElement(MemoryRouter, { initialEntries: [initialEntry] },
+            React.createElement(Routes, null,
+              React.createElement(Route, { path: 'admin', element: React.createElement(AdminDashboardLayout) },
+                React.createElement(Route, { path: 'dashboard', element: React.createElement('div', null, 'Dashboard content') }),
+                React.createElement(Route, { path: 'entrepreneurs', element: React.createElement('div', null, 'Entrepreneurs content') }),
+                React.createElement(Route, { path: 'analytics/geography', element: React.createElement('div', null, 'Geography content') })
+              )
+            )
+          )
+        )
+      )
+    )
+  }
+
+  const htmlDashboard = renderWithRoute('/admin/dashboard')
+  // Dashboard is active
+  assert.match(htmlDashboard, /class="active"[^>]*href="\/admin\/dashboard"/)
+  assert.match(htmlDashboard, /aria-current="page"[^>]*href="\/admin\/dashboard"/)
+  assert.match(htmlDashboard, /lucide-layout-dashboard/)
+  assert.match(htmlDashboard, /lucide-users/)
+  assert.match(htmlDashboard, /lucide-map-pinned/)
+  assert.match(htmlDashboard, /lucide-log-out/)
+  assert.match(htmlDashboard, /title="Dashboard"/)
+  assert.match(htmlDashboard, /title="Entrepreneurs"/)
+  assert.match(htmlDashboard, /title="Geographic Analytics"/)
+  assert.match(htmlDashboard, /title="Logout"/)
+  assert.match(htmlDashboard, /aria-label="Open sidebar"/)
+  assert.match(htmlDashboard, /aria-label="Close sidebar"/)
+
+  const htmlEntrepreneurs = renderWithRoute('/admin/entrepreneurs')
+  assert.match(htmlEntrepreneurs, /class="active"[^>]*href="\/admin\/entrepreneurs"/)
+  assert.match(htmlEntrepreneurs, /aria-current="page"[^>]*href="\/admin\/entrepreneurs"/)
+
+  const htmlGeography = renderWithRoute('/admin/analytics/geography')
+  assert.match(htmlGeography, /class="active"[^>]*href="\/admin\/analytics\/geography"/)
+  assert.match(htmlGeography, /aria-current="page"[^>]*href="\/admin\/analytics\/geography"/)
+})
+
+test('admin and user sidebars use completely independent localStorage keys',()=>{
+  const adminSource = readFileSync(new URL('../src/layouts/AdminDashboardLayout.tsx', import.meta.url), 'utf8')
+  const userSource = readFileSync(new URL('../src/layouts/UserDashboardLayout.tsx', import.meta.url), 'utf8')
+  assert.match(adminSource, /udyammitra\.admin\.sidebar\.collapsed/)
+  assert.match(userSource, /udyammitra-sidebar-collapsed/)
+  assert.ok(!adminSource.includes('udyammitra-sidebar-collapsed'))
+  assert.ok(!userSource.includes('udyammitra.admin.sidebar.collapsed'))
+})
+
+test('admin CSS contains responsive collapse rules, transitions, and mobile drawer styles',()=>{
+  const css = readFileSync(new URL('../src/features/admin/admin.css', import.meta.url), 'utf8')
+  assert.match(css, /--admin-sidebar-width:\s*280px/)
+  assert.match(css, /\.officer-layout--collapsed\s*\{[^}]*--admin-sidebar-width:\s*76px/)
+  assert.match(css, /transition:\s*grid-template-columns\s*\.2s\s*ease/)
+  assert.match(css, /\.officer-layout--collapsed\s+\.officer-sidebar\s+\.brand>span:not\(\.brand__mark\)\s*\{\s*display:\s*none/)
+  assert.match(css, /\.officer-layout--collapsed\s+\.officer-sidebar>p/)
+  assert.match(css, /@media\(max-width:900px\)[\s\S]*?\.officer-sidebar\s*\{[^}]*position:\s*fixed/)
+  assert.match(css, /@media\(max-width:900px\)[\s\S]*?\.officer-sidebar--open\s*\{[^}]*transform:\s*translateX\(0\)/)
+})
