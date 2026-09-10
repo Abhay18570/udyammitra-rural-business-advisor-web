@@ -495,5 +495,65 @@ export const landingMessages = {
     "en": "Your language • Your business journey",
     "hi": "आपकी भाषा • आपकी व्यवसाय यात्रा",
     "mr": "तुमची भाषा • तुमचा व्यवसाय प्रवास"
+  },
+  "latestUpdatesLabel": {
+    "en": "LATEST UPDATES",
+    "hi": "नवीनतम अपडेट",
+    "mr": "नवीन अपडेट्स"
+  },
+  "latestUpdatesRegion": {
+    "en": "Latest updates",
+    "hi": "नवीनतम अपडेट",
+    "mr": "नवीन अपडेट्स"
+  },
+  "pauseUpdates": {
+    "en": "Pause updates",
+    "hi": "अपडेट रोकें",
+    "mr": "अपडेट थांबवा"
+  },
+  "resumeUpdates": {
+    "en": "Resume updates",
+    "hi": "अपडेट शुरू करें",
+    "mr": "अपडेट सुरू करा"
+  },
+  "previousUpdate": {
+    "en": "Previous update",
+    "hi": "पिछला अपडेट",
+    "mr": "मागील अपडेट"
+  },
+  "nextUpdate": {
+    "en": "Next update",
+    "hi": "अगला अपडेट",
+    "mr": "पुढील अपडेट"
+  },
+  "homeAlert1": {
+    "en": "Explore government-supported financing options for eligible micro and small enterprises.",
+    "hi": "पात्र सूक्ष्म और लघु उद्यमों के लिए सरकार समर्थित वित्तीय विकल्पों की जानकारी देखें।",
+    "mr": "पात्र सूक्ष्म आणि लघु उद्योगांसाठी शासन-समर्थित वित्तपुरवठा पर्यायांची माहिती पहा."
+  },
+  "homeAlert2": {
+    "en": "Complete your entrepreneur profile to receive more relevant business and scheme guidance.",
+    "hi": "अधिक प्रासंगिक व्यवसाय और योजना मार्गदर्शन के लिए अपना उद्यमी प्रोफ़ाइल पूरा करें।",
+    "mr": "अधिक संबंधित व्यवसाय आणि योजना मार्गदर्शनासाठी आपले उद्योजक प्रोफाइल पूर्ण करा."
+  },
+  "homeAlert3": {
+    "en": "Use Market Analysis to understand nearby competition and opportunities before investing.",
+    "hi": "निवेश से पहले आसपास की प्रतिस्पर्धा और अवसरों को समझने के लिए बाजार विश्लेषण का उपयोग करें।",
+    "mr": "गुंतवणुकीपूर्वी जवळील स्पर्धा आणि संधी समजून घेण्यासाठी बाजार विश्लेषण वापरा."
+  },
+  "homeAlert4": {
+    "en": "Prepare your Financial Plan to estimate project cost, own contribution and financing requirement.",
+    "hi": "परियोजना लागत, स्वयं का योगदान और वित्तीय आवश्यकता का अनुमान लगाने के लिए अपनी वित्तीय योजना तैयार करें।",
+    "mr": "प्रकल्प खर्च, स्वतःचे योगदान आणि वित्तीय गरज यांचा अंदाज घेण्यासाठी आपली आर्थिक योजना तयार करा."
+  },
+  "homeAlert5": {
+    "en": "Review Government Schemes and verify eligibility from the linked official source before applying.",
+    "hi": "सरकारी योजनाओं की समीक्षा करें और आवेदन से पहले आधिकारिक स्रोत से पात्रता सत्यापित करें।",
+    "mr": "शासकीय योजनांचा आढावा घ्या आणि अर्ज करण्यापूर्वी अधिकृत स्रोतावरून पात्रता पडताळा."
+  },
+  "homeAlert6": {
+    "en": "Business Analysis combines profile, financial and market evidence to support better decisions.",
+    "hi": "व्यवसाय विश्लेषण बेहतर निर्णयों के लिए प्रोफ़ाइल, वित्तीय और बाजार साक्ष्यों को एक साथ प्रस्तुत करता है।",
+    "mr": "व्यवसाय विश्लेषण चांगल्या निर्णयांसाठी प्रोफाइल, आर्थिक आणि बाजारातील पुरावे एकत्रित करते."
   }
 } satisfies Record<string, Message>

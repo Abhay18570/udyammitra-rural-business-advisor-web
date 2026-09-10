@@ -17,6 +17,9 @@ class Settings(BaseSettings):
     jwt_secret_key: Optional[str] = None
     jwt_algorithm: str = "HS256"
     access_token_expire_minutes: int = Field(default=30, gt=0)
+    bootstrap_admin_email: Optional[str] = Field(default=None, repr=False)
+    bootstrap_admin_password: Optional[SecretStr] = Field(default=None, repr=False)
+    bootstrap_admin_mobile: Optional[str] = Field(default=None, repr=False)
 
     nearby_market_provider: Literal["overpass", "google"] = "overpass"
     google_places_api_key: Optional[SecretStr] = Field(default=None, repr=False)

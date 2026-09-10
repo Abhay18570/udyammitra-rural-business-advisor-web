@@ -1,6 +1,6 @@
 import type { NearbyMarketEvidence, NearbyPOI } from './nearbyMarket'
-export interface AnalysisEvidence { id: string; value: unknown; source_kind: string; source_ref: string; observed_at: string | null; unit: string | null; limitations: string[] }
-export interface AnalysisFinding { id: string; rule_id: string; title: string; explanation: string; importance: string | null; evidence_ids: string[]; finding_ids: string[]; limitations: string[] }
+export interface AnalysisEvidence { id: string; value: unknown; source_kind: string; source_ref: string; radius_km?: number | null; observed_at: string | null; unit: string | null; limitations: string[] }
+export interface AnalysisFinding { source_type?: 'BUSINESS_BASELINE' | 'PROFILE' | 'MARKET' | 'FINANCIAL' | 'CATALOG' | 'DYNAMIC'; id: string; rule_id: string; title: string; explanation: string; importance: string | null; evidence_ids: string[]; finding_ids: string[]; limitations: string[] }
 export interface AnalysisThreat { id: string; title: string; description: string; evidence_kind: string; severity: string | null; severity_reason: string | null; likelihood: string | null; mitigation: string; evidence_ids: string[]; coverage_warnings: string[] }
 export interface BusinessAnalysis {
   id: string; created_at: string

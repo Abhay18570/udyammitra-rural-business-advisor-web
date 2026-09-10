@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 
 from app.core.security import decode_access_token, token_subject
 from app.db.session import get_db
-from app.models.user import User
+from app.models.user import User, UserRole
 from app.repositories.user_repository import UserRepository
 
 bearer_scheme = HTTPBearer(auto_error=False)
@@ -26,4 +26,10 @@ def get_current_user(credentials: Annotated[Optional[HTTPAuthorizationCredential
     user = UserRepository(db).get_by_id(user_id)
     if not user or not user.is_active:
         raise error
+    return user
+
+
+def require_admin(user: Annotated[User, Depends(get_current_user)]) -> User:
+    if user.role not in (UserRole.ADMIN, UserRole.SUPER_ADMIN):
+        raise HTTPException(status_code=403, detail="You do not have permission to access the administration portal.")
     return user

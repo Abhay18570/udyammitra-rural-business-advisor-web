@@ -33,7 +33,7 @@ def catalog_snapshot(business):
         'estimated_setup_cost_min', 'estimated_setup_cost_max', 'working_capital_min', 'working_capital_max',
         'required_skills', 'preferred_skills', 'required_resources', 'optional_resources', 'equipment',
         'customer_segments', 'market_drivers', 'competition_factors', 'supply_chain_factors', 'major_risks',
-        'required_registrations', 'operating_requirements']
+        'required_registrations', 'operating_requirements', 'baseline_swot']
     def encode(value):
         return str(value) if isinstance(value, Decimal) else value.value if hasattr(value, 'value') else value
     return {field: encode(getattr(business, field)) for field in fields}
@@ -116,6 +116,8 @@ class BusinessAnalysisService:
         for kind in ('skills', 'resources'):
             add('profile.' + kind, [m.model_dump() for m in entrepreneur[kind]], 'SELF_REPORTED', 'current-profile', is_self_report=True, observed_at=profile['observed_at'], limitations=['Broad aliases are tentative; not independently verified.'])
         add('profile.budget', {key: str(value) if isinstance(value, Decimal) else value for key, value in budget.items()}, 'SELF_REPORTED', 'current-profile', unit='INR', is_self_report=True, observed_at=profile['observed_at'])
+        if catalog.get('baseline_swot'):
+            add('catalog.baseline_swot', catalog['baseline_swot'], 'BUSINESS_BASELINE', catalog['baseline_swot']['version'], is_assumption=True, limitations=['General business guidance, not verified local demand or observed competition.'])
         add('catalog.risks', catalog['major_risks'], 'CATALOG_ASSUMPTION', fingerprint(catalog), is_assumption=True)
         add('catalog.requirements', {key: catalog[key] for key in ('required_skills', 'required_resources', 'operating_requirements')}, 'CATALOG_ASSUMPTION', fingerprint(catalog), is_assumption=True)
         add('financial.setup', {'project_capacity': financial.feasible_project_cost, 'costs': financial.business_costs, 'alignment': financial.alignment.model_dump()}, 'CALCULATED', str(financial.id), observed_at=financial.created_at, unit='INR', is_assumption=True)
@@ -142,7 +144,7 @@ class BusinessAnalysisService:
         response = BusinessAnalysisResponse(id=uuid.uuid4(), created_at=datetime.now(timezone.utc), business=context.business,
             profile_context=context.entrepreneur, financial_context={'analysis': financial.model_dump(mode='json'), 'scheme': scheme.model_dump(mode='json'), 'budget': context.budget.model_dump(mode='json')},
             market_context=market, swot=swot, local_threats=threats, competition=competition, pricing=pricing, evidence=evidence,
-            quality={'section_statuses': {'swot': 'EVIDENCE_BASED', 'threats': 'EVIDENCE_BASED', 'competition': competition['classification'], 'pricing': pricing['status']},
+            quality={'section_statuses': {'swot': 'BASELINE_AND_EVIDENCE' if catalog.get('baseline_swot') else 'EVIDENCE_BASED', 'threats': 'EVIDENCE_BASED', 'competition': competition['classification'], 'pricing': pricing['status']},
                 'sources': ['SELF_REPORTED_PROFILE', 'CATALOG_ASSUMPTIONS', 'FINANCIAL_SNAPSHOT', 'PROTOTYPE_SCHEME_RULES', 'GOOGLE_PLACES' if market.source.provider == 'GOOGLE_PLACES' else 'OPENSTREETMAP'],
                 'freshness': market.source.model_dump(mode='json'), 'warnings': context.quality,
                 'rule_versions': versions, 'context_hash': context_hash})

@@ -56,6 +56,7 @@ class BusinessProfile(Base):
     market_drivers: Mapped[List[str]] = mapped_column(JSONB, nullable=False)
     competition_factors: Mapped[List[str]] = mapped_column(JSONB, nullable=False)
     supply_chain_factors: Mapped[List[str]] = mapped_column(JSONB, nullable=False)
+    baseline_swot: Mapped[dict] = mapped_column(JSONB, nullable=False, default=dict, server_default="{}")
     major_risks: Mapped[List[str]] = mapped_column(JSONB, nullable=False)
     required_registrations: Mapped[List[str]] = mapped_column(JSONB, nullable=False)
     operating_requirements: Mapped[List[str]] = mapped_column(JSONB, nullable=False)

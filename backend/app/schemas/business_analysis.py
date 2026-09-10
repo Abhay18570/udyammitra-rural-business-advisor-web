@@ -50,7 +50,7 @@ class Evidence(BaseModel):
     id: str
     value: JsonValue
     unit: Optional[str] = None
-    source_kind: Literal['SELF_REPORTED', 'CATALOG_ASSUMPTION', 'CALCULATED', 'OBSERVED_LOCAL', 'DATA_LIMITATION']
+    source_kind: Literal['SELF_REPORTED', 'CATALOG_ASSUMPTION', 'CALCULATED', 'OBSERVED_LOCAL', 'DATA_LIMITATION', 'BUSINESS_BASELINE']
     source_ref: str
     observed_at: Optional[datetime] = None
     geography: Optional[str] = None
@@ -119,6 +119,7 @@ class Threat(BaseModel):
 
 
 class SwotItem(BaseModel):
+    source_type: Literal['BUSINESS_BASELINE', 'PROFILE', 'MARKET', 'FINANCIAL', 'CATALOG', 'DYNAMIC'] = 'DYNAMIC'
     id: str
     rule_id: str
     category: str

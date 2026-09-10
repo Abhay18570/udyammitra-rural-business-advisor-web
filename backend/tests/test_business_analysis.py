@@ -72,8 +72,8 @@ def test_strict_request(client,db_session,osm,extra):
 @pytest.mark.parametrize('change,expected', [('missing_business','PROPOSED_BUSINESS_REQUIRED'),('business','PROPOSED_BUSINESS_MISMATCH'),('location','PROFILE_LOCATION_REQUIRED'),('catalog','CATALOG_COSTS_CHANGED'),('financial','inconsistent_financial_snapshot'),('version','unsupported_financial_version')])
 def test_source_validation(client,db_session,osm,change,expected):
     token,fid=prepare(client,db_session)
-    profile=db_session.scalar(select(EntrepreneurProfile))
     row=db_session.get(FinancialAnalysis,uuid.UUID(fid))
+    profile=db_session.scalar(select(EntrepreneurProfile).where(EntrepreneurProfile.user_id==row.user_id))
     if change=='missing_business': profile.proposed_business_id=None
     elif change=='business': profile.proposed_business_id=db_session.scalar(select(BusinessProfile.id).where(BusinessProfile.slug=='kirana-general-store'))
     elif change=='location': profile.village=None
@@ -155,7 +155,7 @@ def test_empty_market_does_not_claim_unmet_demand(client,db_session,osm):
     body=run(client,token,fid).json()
     assert body['competition']['classification']=='NO_MAPPED_DIRECT_EVIDENCE'
     assert body['competition']['direct_count']==0
-    assert body['swot']['opportunities']==[]
+    assert not any(i['source_type'] == 'MARKET' or 'market' in i['evidence_ids'] for i in body['swot']['opportunities'])
     assert not any('competition' in item['rule_id'] for item in body['swot']['strengths'])
 
 

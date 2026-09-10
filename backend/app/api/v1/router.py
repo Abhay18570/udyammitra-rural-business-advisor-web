@@ -22,3 +22,6 @@ router.include_router(scheme_router, prefix="/schemes", tags=["scheme eligibilit
 
 from app.api.v1.endpoints.business_analysis import router as business_analysis_router
 router.include_router(business_analysis_router, prefix='/business-analysis', tags=['business analysis'])
+
+from app.api.v1.endpoints.admin import router as admin_router
+router.include_router(admin_router, prefix="/admin", tags=["administration"])

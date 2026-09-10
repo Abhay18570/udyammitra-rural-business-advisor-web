@@ -4,6 +4,7 @@ from typing import List
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
+from app.schemas.baseline_swot import BaselineSwot
 from app.models.business import BusinessCategory, BusinessType
 
 
@@ -21,6 +22,7 @@ class BusinessListItem(BaseModel):
 
 
 class BusinessDetail(BusinessListItem):
+    baseline_swot: dict = Field(default_factory=dict)
     detailed_description: str
     estimated_setup_cost_min: Decimal
     estimated_setup_cost_max: Decimal
@@ -41,6 +43,8 @@ class BusinessDetail(BusinessListItem):
 
     @model_validator(mode="after")
     def validate_ranges_and_knowledge(self) -> "BusinessDetail":
+        if self.baseline_swot:
+            BaselineSwot.model_validate(self.baseline_swot)
         ranges = [(self.minimum_capital, self.maximum_capital), (self.estimated_setup_cost_min, self.estimated_setup_cost_max), (self.working_capital_min, self.working_capital_max)]
         if any(low < 0 or high < low for low, high in ranges):
             raise ValueError("Business cost ranges must be non-negative and ordered.")

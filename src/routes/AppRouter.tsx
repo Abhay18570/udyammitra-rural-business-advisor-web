@@ -1,6 +1,9 @@
+import { lazy, Suspense } from 'react'
 import { useUi as useTextUi } from '../i18n/uiContextValue'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
-import { AdminLayout } from '../layouts/AdminLayout'
+import { AdminDashboardLayout } from '../layouts/AdminDashboardLayout'
+import { AdminDashboardPage } from '../features/admin/AdminDashboardPage'
+import { AdminProtectedRoute } from './AdminProtectedRoute'
 import { AuthLayout } from '../layouts/AuthLayout'
 import { PublicLayout } from '../layouts/PublicLayout'
 import { UserDashboardLayout } from '../layouts/UserDashboardLayout'
@@ -20,9 +23,12 @@ import { BusinessAnalysisPage } from '../features/businessAnalysis/BusinessAnaly
 import { GovernmentSchemesPage } from '../features/schemes/GovernmentSchemesPage'
 import { FinancialPlanPage } from '../features/financial/FinancialPlanPage'
 
+const GeographicAnalyticsPage = lazy(() => import('../features/admin/GeographicAnalyticsPage').then(module => ({ default: module.GeographicAnalyticsPage })))
+const StateAnalyticsPage = lazy(() => import('../features/admin/StateAnalyticsPage').then(module => ({ default: module.StateAnalyticsPage })))
+const EntrepreneursPage = lazy(() => import('../features/admin/EntrepreneursPage').then(module => ({ default: module.EntrepreneursPage })))
+
 const publicPages = ['about', 'how-it-works', 'features', 'privacy', 'terms', 'disclaimer']
 const userPages = ['documents', 'compliance', 'advisor', 'compare', 'my-analyses', 'reports', 'notifications', 'settings']
-const adminPages = ['dashboard', 'users', 'businesses', 'schemes', 'knowledge', 'map', 'reports', 'settings']
 
 export function AppRouter() {
   const { text: textUi } = useTextUi()
@@ -39,7 +45,7 @@ export function AppRouter() {
           <Route path="register" element={<RegisterPage />} />
           <Route path="forgot-password" element={<ForgotPasswordPage />} />
         </Route>
-        <Route element={<ProtectedRoute roles={['USER', 'ADMIN', 'SUPER_ADMIN']} />}>
+        <Route element={<ProtectedRoute roles={['USER']} />}>
           <Route element={<UserDashboardLayout />}>
             <Route path="schemes" element={<GovernmentSchemesPage />} />
             <Route path="dashboard" element={<DashboardPage />} />
@@ -60,9 +66,12 @@ export function AppRouter() {
         <Route path="admin/login" element={<AuthLayout />}>
           <Route index element={<LoginPage />} />
         </Route>
-        <Route element={<ProtectedRoute roles={['ADMIN', 'SUPER_ADMIN']} />}>
-          <Route path="admin" element={<AdminLayout />}>
-            {adminPages.map(path => <Route key={path} path={path} element={<PlaceholderPage area="Administration" />} />)}
+        <Route element={<AdminProtectedRoute />}>
+          <Route path="admin" element={<AdminDashboardLayout />}>
+            <Route path="dashboard" element={<AdminDashboardPage />} />
+            <Route path="analytics/geography" element={<Suspense fallback={<p role="status">{textUi("Loading statistics")}</p>}><GeographicAnalyticsPage /></Suspense>} />
+            <Route path="analytics/geography/state/:stateKey" element={<Suspense fallback={<p role="status">{textUi("Loading statistics")}</p>}><StateAnalyticsPage /></Suspense>} />
+            <Route path="entrepreneurs" element={<Suspense fallback={<p role="status">{textUi("Loading statistics")}</p>}><EntrepreneursPage /></Suspense>} />
             <Route index element={<Navigate to="dashboard" replace />} />
           </Route>
         </Route>

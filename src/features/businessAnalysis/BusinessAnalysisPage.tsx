@@ -1,3 +1,5 @@
+import { AnalysisSummary, SwotAnalysis } from './SwotAnalysis'
+import { BusinessOverview } from './BusinessOverview'
 import { useUi as useTextUi } from '../../i18n/uiContextValue'
 import { LocalizedText, LocalizedDate } from '../../i18n/LocalizedText'
 import { useEffect, useRef, useState } from 'react'
@@ -14,7 +16,8 @@ import type { BusinessAnalysis } from '../../types/businessAnalysis'
 import type { FinancialAnalysis } from '../../types/financial'
 const readable = (s: string) => s.replaceAll('_', ' ')
 
-function EvidenceLinks({ ids }: { ids: string[] }) {
+function EvidenceLinks({ ids }: { ids?: string[] }) {
+  if (!ids || ids.length === 0) return null
   return <p className="analysis-evidence-links"><LocalizedText value={"Evidence: "} />{ids.map(id => <a key={id} href={`#evidence-${id}`}>{id} </a>)}</p>
 }
 
@@ -76,28 +79,22 @@ function BusinessAnalysisWorkspace() {
   return <div className="workspace-page business-analysis-page">
     <header><h1><LocalizedText value={"Business Analysis"} /></h1><p><LocalizedText value={"Evidence-based SWOT, threats, competitor mapping and indicative pricing guidance."} /></p></header>
     <nav><Link to="/profile"><LocalizedText value={"Review Profile"} /></Link> · <Link to="/financial-plan"><LocalizedText value={"Financial Plan"} /></Link> · <Link to="/market-analysis"><LocalizedText value={"Market Analysis"} /></Link></nav>
-    {loading ? <p role="status"><LocalizedText value={"Loading saved financial context…"} /></p> : <section className="profile-card">
-      <h2><LocalizedText value={"Business Overview"} /></h2>
-      {financial ? <><h3>{financial.business.name}</h3><p><LocalizedText value={"Saved margin: ₹"} />{financial.availableMarginCapital}<LocalizedText value={" · Project capacity: ₹"} />{financial.feasibleProjectCost}</p>
-        <label><LocalizedText value={"Market radius "} /><select value={radius} disabled={running} onChange={e => { setRadius(Number(e.target.value)); setResult(null) }}>{Array.from({ length: 10 }, (_, i) => i + 1).map(r => <option key={r} value={r}>{r}<LocalizedText value={" km"} /></option>)}</select></label>
-        <Button disabled={running} onClick={() => void run()}><LocalizedText value={running ? 'Analysing evidence…' : 'Generate Business Analysis'} /></Button>
-      </> : <p><LocalizedText value={"Save a financial plan for your proposed business first."} /></p>}
-    </section>}
+    {loading ? <p role="status"><LocalizedText value={"Loading saved financial context…"} /></p> : <BusinessOverview financial={financial} radius={radius} running={running} hasAnalysis={Boolean(result)} onRadius={value => { setRadius(value); setResult(null) }} onGenerate={() => void run()} />}
     {error && <div className="profile-error" role="alert"><LocalizedText value={error} /> <Button onClick={() => { setError(''); setLoading(true); setReload(n => n + 1) }}><LocalizedText value={"Reload context"} /></Button></div>}
     {running && <p role="status"><LocalizedText value={"Resolving current market evidence and evaluating planning rules…"} /></p>}
     {result && <AnalysisResults result={result} />}
   </div>
 }
 
-function AnalysisResults({ result }: { result: BusinessAnalysis }) {
+export function AnalysisResults({ result }: { result: BusinessAnalysis }) {
   const { text: textUi } = useTextUi()
 
   const market = result.market_context
   const competition = result.competition
   const source = market.source.cache_status === 'STALE_CACHE' ? 'STALE CACHE' : market.source.mode
   return <div className="analysis-sections">
-    <p><LocalizedText value={"Saved "} /><LocalizedDate value={result.created_at} /><LocalizedText value={" · Snapshot "} />{result.id}<LocalizedText value={". Saved results retain their original evidence."} /></p>
-    <section><h2><LocalizedText value={"SWOT Analysis"} /></h2><div className="analysis-quadrants">{Object.entries(result.swot).map(([quadrant, items]) => <article className="profile-card" key={quadrant}><h3><LocalizedText value={quadrant} /></h3>{items.length ? items.map(item => <div key={item.id}><h4><LocalizedText value={item.title} /></h4><p><LocalizedText value={item.explanation} /></p>{item.importance && <small><LocalizedText value={item.importance} /><LocalizedText value={" importance"} /></small>}<EvidenceLinks ids={item.evidence_ids} />{item.finding_ids.map(id => <a key={id} href={`#${id}`}><LocalizedText value={"View threat finding "} /></a>)}</div>) : <p><LocalizedText value={"No supported finding for this quadrant."} /></p>}</article>)}</div></section>
+    <AnalysisSummary result={result} />
+    <SwotAnalysis result={result} />
     <section><h2><LocalizedText value={"Local Threats"} /></h2><div className="analysis-quadrants">{result.local_threats.map(t => <article className="profile-card" key={t.id} id={t.id}><h3><LocalizedText value={t.title} /></h3><p><LocalizedText value={readable(t.evidence_kind)} /><LocalizedText value={" · Severity: "} /><LocalizedText value={t.severity ?? 'Unclassified'} /><LocalizedText value={" · Likelihood: "} /><LocalizedText value={t.likelihood ?? 'Not established'} /></p><p><LocalizedText value={t.description} /></p>{t.severity_reason && <p><LocalizedText value={t.severity_reason} /></p>}<strong><LocalizedText value={"Mitigation"} /></strong><p><LocalizedText value={t.mitigation} /></p>{t.coverage_warnings.map(w => <p key={w}><LocalizedText value={w} /></p>)}<EvidenceLinks ids={t.evidence_ids} /></article>)}</div></section>
     <section className="profile-card"><h2><LocalizedText value={"Competitor Mapping"} /></h2><p><LocalizedText value={source} /><LocalizedText value={" · Evidence fetched "} /><LocalizedDate value={market.source.fetched_at} /></p>
       <dl className="scheme-panel__metrics"><div><dt><LocalizedText value={"Radius"} /></dt><dd>{competition.selected_radius_km}<LocalizedText value={" km"} /></dd></div><div><dt><LocalizedText value={"Direct mapped competitors"} /></dt><dd>{competition.direct_count ?? <LocalizedText value="Unavailable" />}</dd></div><div><dt><LocalizedText value={"Related businesses"} /></dt><dd>{competition.related_count ?? <LocalizedText value="Unavailable" />}</dd></div><div><dt><LocalizedText value={"Nearest direct competitor"} /></dt><dd>{competition.nearest ? <>{competition.nearest.name} · {competition.nearest.distance_km}<LocalizedText value=" km" /></> : <LocalizedText value="No mapped direct evidence" />}</dd></div><div><dt><LocalizedText value={"Average direct distance"} /></dt><dd><LocalizedText value={competition.average_distance == null ? 'Unavailable' : `${(competition.average_distance / 1000).toFixed(2)} km`} /></dd></div><div><dt><LocalizedText value={"Mapped direct competitors per km²"} /></dt><dd>{competition.mapped_density?.toFixed(4) ?? <LocalizedText value="Unavailable" />}</dd></div></dl>

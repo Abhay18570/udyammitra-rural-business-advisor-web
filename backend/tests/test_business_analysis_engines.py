@@ -84,7 +84,7 @@ def test_swot_evidence_and_financial_gaps():
     result=analyze_swot(c,competition,threats)
     assert {'setup-gap','scheme-gap','budget-different'} <= {i.rule_id for i in result['weaknesses']}
     assert 'declared-skills' in {i.rule_id for i in result['strengths']}
-    assert all(i.finding_ids[0] in {t.id for t in threats} for i in result['threats'])
+    assert all(i.finding_ids[0] in {t.id for t in threats} for i in result['threats'] if i.source_type != 'BUSINESS_BASELINE')
     assert all(t.severity_reason for t in threats if t.severity)
 
 
@@ -92,11 +92,11 @@ def test_zero_and_stale_no_unsupported_opportunity():
     c=context(distances=(),related=0)
     competition=analyze_competition(c)
     swot=analyze_swot(c,competition,analyze_threats(c,competition))
-    assert swot['opportunities']==[]
+    assert all(i.source_type == 'BUSINESS_BASELINE' for i in swot['opportunities'])
     assert not any('competition' in i.rule_id for i in swot['strengths'])
     c=context(stale=True)
     competition=analyze_competition(c)
-    assert analyze_swot(c,competition,analyze_threats(c,competition))['opportunities']==[]
+    assert all(i.source_type == 'BUSINESS_BASELINE' for i in analyze_swot(c,competition,analyze_threats(c,competition))['opportunities'])
     assert not any(t.rule_id=='mapped-pressure' for t in analyze_threats(c,competition))
 
 

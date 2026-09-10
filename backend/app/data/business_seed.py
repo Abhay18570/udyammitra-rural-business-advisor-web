@@ -4,6 +4,8 @@ from typing import Dict, List
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from copy import deepcopy
+from app.data.baseline_swot import BASELINE_SWOT
 from app.models.business import BusinessCategory, BusinessProfile, BusinessType
 from app.schemas.business import BusinessDetail
 
@@ -144,6 +146,9 @@ BUSINESS_SEEDS: List[Dict] = [
 ]
 
 
+for _business in BUSINESS_SEEDS:
+    _business['baseline_swot'] = deepcopy(BASELINE_SWOT[_business['slug']])
+
 def seed_businesses(db: Session) -> Dict[str, int]:
     created = updated = unchanged = 0
     for data in BUSINESS_SEEDS:
@@ -164,3 +169,23 @@ def seed_businesses(db: Session) -> Dict[str, int]:
             unchanged += 1
     db.commit()
     return {"created": created, "updated": updated, "unchanged": unchanged}
+
+
+def seed_baseline_swot(db: Session) -> Dict[str, int]:
+    """Update only baseline knowledge on existing canonical businesses; never reset catalog edits."""
+    updated = unchanged = missing = 0
+    try:
+        for slug, guidance in BASELINE_SWOT.items():
+            business = db.scalar(select(BusinessProfile).where(BusinessProfile.slug == slug))
+            if business is None:
+                missing += 1
+            elif business.baseline_swot == guidance:
+                unchanged += 1
+            else:
+                business.baseline_swot = deepcopy(guidance)
+                updated += 1
+        db.commit()
+    except Exception:
+        db.rollback()
+        raise
+    return {'updated': updated, 'unchanged': unchanged, 'missing': missing}

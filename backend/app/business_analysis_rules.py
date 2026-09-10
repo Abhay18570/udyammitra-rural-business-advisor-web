@@ -1,5 +1,5 @@
 RULE_VERSIONS = {
-    'analysis': 'business-analysis-v1', 'swot': 'swot-v1', 'threat': 'threat-v1',
+    'analysis': 'business-analysis-v1', 'swot': 'swot-v2', 'baseline_swot': 'business-baseline-v1', 'threat': 'threat-v1',
     'competition': 'mapped-competition-v1', 'pricing': 'pricing-v1', 'profile': 'profile-evidence-v1',
 }
 # Mitigations complement (rather than replace) the canonical catalog's risk descriptions.
